@@ -9,14 +9,21 @@ I AM SAM. I AM SAM. SAM I AM. \
 THAT SAM-I-AM! THAT SAM-I-AM! I DO NOT LIKE THAT SAM-I-AM! \
 DO WOULD YOU LIKE GREEN EGGS AND HAM? \
 I DO NOT LIKE THEM,SAM-I-AM. \
-I DO NOT LIKE GREEN EGGS AND HAM. \
+I DO NOT LIKE GREEN EGGS AND HAM. 
 
 В этом случае в качестве результата необходимо вернуть:
 1: I AM SAM. I AM SAM. SAM I AM. \
 2: THAT SAM-I-AM! THAT SAM-I-AM! I DO NOT LIKE THAT SAM-I-AM! \
-4: I DO NOT LIKE THEM,SAM-I-AM. \
+4: I DO NOT LIKE THEM,SAM-I-AM. 
 
 ## Реализовать 2 перегрузки описанной функции:
-1. Принимает на вход и возвращает строки в виде указателя (const char*). \
-2. Принимает на вход и возвращает строки в виде экземпляра std::string. \
+1. Принимает на вход и возвращает строки в виде указателя (const char*). 
+2. Принимает на вход и возвращает строки в виде экземпляра std::string. 
 * Тип возвращаемого из каждой перегрузки значения должен совпадать по стилю с типом передаваемого.Для всех типов объявить using через класс со статическим членом.Если передаётся тип данных из языка C++ (string, vector, …), то и возвращать необходимо тип из C++. Если передаётся сырой тип из C (char*, int*, …), то вернуть также нужно тип из C.
+
+## запуск программы
+```
+valgrind ./main
+# or
+./main
+```
