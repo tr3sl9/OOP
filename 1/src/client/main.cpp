@@ -1,35 +1,48 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <memory>
+#include <algorithm>
+#include <ranges>
+#include <iterator>
+
 #include "../lib/stringlib.hpp"
+
+#define PROMPT_FILE "Enter filename: "
+#define PROMPT_TERM "Enter search term: "
+#define NO_MATCHES "No matches found"
 
 int main() {
     try {
-        while (true) {
-            std::string filename = read_string_console((std::string)"Enter filename: ");
-            if (filename.empty()) break;
+        for (auto i : std::views::iota(0)) {
+            std::string filename = read_string_console(PROMPT_FILE);
+            if (filename.empty()) {
+                break;
+            }
 
-            std::string search_term = read_string_console((std::string)"Enter search term: ");
-            if (search_term.empty()) break;
-            
+            std::string search_term = read_string_console(PROMPT_TERM);
+            if (filename.empty()) {
+                break;
+            }
+
             auto results = search_in_file(filename, search_term);
-            
+
             if (results.empty()) {
-                std::cout << "No matches found." << std::endl;
+                std::cout << NO_MATCHES << std::endl;
             } else {
                 std::cout << "Found " << results.size() << " matches:" << std::endl;
-                for (const auto& result : results) {
+                std::ranges::for_each(results, [](const auto& result) {
                     std::cout << result << std::endl;
-                }
+                });
             }
-            
+
             std::vector<const char*> c_results = search_in_file(filename.c_str(), search_term.c_str());
-            if (!c_results.empty()) {
-                std::cout << "C-style results (" << c_results.size() << " matches):" << std::endl;
-                for (const char* result : c_results) {
+            if (!c_results.empty()) {   
+                std::cout << "C-style results (" << c_results.size() << "matches):" << std::endl;
+                
+                std::ranges::for_each(c_results, [](const char* result) {
                     std::cout << result << std::endl;
-                }
+                });
+                
                 free_search_results(c_results);
             }
             
