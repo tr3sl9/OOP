@@ -26,7 +26,7 @@ char* read_string_console(const char* prompt) {
     char* result = new char[input.size() + 1];
     
     std::ranges::copy(input, result);
-    result[input.size()] = '\n';
+    result[input.size()] = '\0';
 
     return result;
 }
@@ -46,7 +46,8 @@ std::string read_string_console(const std::string& prompt) {
 namespace {
     std::string to_lower(const std::string& s) {
         std::string result;
-        std::ranges::transform(s, std::back_inserter(result), [](unsigned char c) { 
+        result.resize(s.size());
+        std::ranges::transform(s.begin(), s.end(), result.begin(), [](unsigned char c) { 
             return std::tolower(c); 
         });
 
