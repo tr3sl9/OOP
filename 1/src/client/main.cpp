@@ -14,17 +14,17 @@
 int main() {
     try {
         for (auto i : std::views::iota(0)) {
-            std::string filename = read_string_console(PROMPT_FILE);
+            std::string filename = read_string_console(static_cast<std::string>(PROMPT_FILE));
             if (filename.empty()) {
                 break;
             }
 
-            std::string search_term = read_string_console(PROMPT_TERM);
+            std::string search_term = read_string_console(static_cast<std::string>(PROMPT_TERM));
             if (filename.empty()) {
                 break;
             }
 
-            auto results = search_in_file(filename, search_term);
+            auto results = search_in_file(static_cast<std::string>(filename), static_cast<std::string>(search_term));
 
             if (results.empty()) {
                 std::cout << NO_MATCHES << std::endl;
@@ -39,7 +39,7 @@ int main() {
             if (!c_results.empty()) {   
                 std::cout << "C-style results (" << c_results.size() << "matches):" << std::endl;
                 
-                std::ranges::for_each(c_results, [](const char* result) {
+                std::ranges::for_each(c_results.begin(), c_results.end(), [](const char* result) {
                     std::cout << result << std::endl;
                 });
                 

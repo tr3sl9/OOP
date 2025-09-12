@@ -9,6 +9,8 @@ include_directories(src/lib)
 set(SOURCES_CLIENT src/client/main.cpp)
 set(SOURCES_LIB src/lib/stringlib.cpp)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 add_executable(main ${SOURCES_CLIENT} ${SOURCES_LIB})
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
