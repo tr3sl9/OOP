@@ -94,8 +94,7 @@ std::vector<const char*> search_in_file(const char* filename, const char* search
     std::vector<std::string> string_results = search_in_file(std::string(filename), std::string(search_term));
     std::vector<const char*> results;
     
-    std::transform(string_results.begin(), string_results.end(), std::back_inserter(results),
-                  [](const std::string& str) {
+    std::ranges::transform(string_results.begin(), string_results.end(), std::back_inserter(results), [](const std::string& str) {
                       char* c_str = new char[str.size() + 1];
                       std::strcpy(c_str, str.c_str());
                       return c_str;
