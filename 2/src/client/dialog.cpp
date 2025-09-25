@@ -108,10 +108,10 @@ void Dialog::testArithmetic() {
     std::cout << "Вторая точка:\n";
     Point p2 = createPoint();
     
-    Point sum = p1.operatorPlus(p2);
+    Point sum = p1 + p2;
     std::cout << p1 << " + " << p2 << " = " << sum << std::endl;
     
-    Point diff = p1.operatorMinus(p2);
+    Point diff = p1 - p2;
     std::cout << p1 << " - " << p2 << " = " << diff << std::endl;
     
     float divisor;
@@ -119,7 +119,7 @@ void Dialog::testArithmetic() {
     std::cin >> divisor;
     
     if (divisor != 0) {
-        Point div = p1.operatorDivision(divisor);
+        Point div = p1 / divisor;
         std::cout << p1 << " / " << divisor << " = " << div << std::endl;
     } else {
         std::cout << "Ошибка: деление на ноль!\n";

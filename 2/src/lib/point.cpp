@@ -26,17 +26,17 @@ float Point::distanceTo(const Point& other) const {
     return sqrt((x - other.x) * (x - other.x) + (y - other.y) * (y - other.y));
 }
 
-Point Point::operatorPlus(const Point& other) const {
+Point Point::operator+(const Point& other) const {
     return Point(x + other.x, y + other.y);
-}
+    }
 
-Point Point::operatorMinus(const Point& other) const {
-    return Point(x - other.x, y - other.y);
-}
+    Point Point::operator-(const Point& other) const {
+        return Point(x - other.x, y - other.y);
+    }
 
-Point Point::operatorDivision(float divisior) const {
-    return Point(x / divisior, y / divisior);
-}
+    Point Point::operator/(float divisior) const {
+        return Point(x / divisior, y / divisior);
+    }
 
 void Point::rotate90Clockwise() {
     float temp = x;

@@ -24,10 +24,12 @@ public:
     
     // Методы
     float distanceTo(const Point& other) const;
-    Point operatorPlus(const Point& other) const;
-    Point operatorMinus(const Point& other) const;
-    Point operatorDivision(float divisor) const;
     void rotate90Clockwise();
+
+    // Операторы
+    Point operator+(const Point& other) const;
+    Point operator-(const Point& other) const;
+    Point operator/(float divisor) const;
     
     // Ввод/вывод
     friend std::istream& operator>>(std::istream& is, Point& point);
