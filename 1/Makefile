@@ -1,6 +1,6 @@
-CFLAGS=-g -Wall -Wextra -Werror -Wpedantic -Wno-implicit-fallthrough
-LDFLAGS=-lreadline `pkg-config libgvc libcgraph --libs`
-CC=gcc
+CFLAGS=-g --std=c++23 -Wall -Wextra -Werror -Wpedantic -Wno-implicit-fallthrough
+LDFLAGS=-lreadline
+CC=g++
 
 OBJ_CLIENT=obj/client
 OBJ_LIB=obj/lib
@@ -9,11 +9,11 @@ SRC_LIB=src/lib
 LIB_TARGET=stringlib.a
 TARGET=main
 
-SOURCES_CLIENT=$(wildcard $(SRC_CLIENT)/*.c)
-OBJECTS_CLIENT=$(patsubst $(SRC_CLIENT)/%.c,$(OBJ_CLIENT)/%.o,$(SOURCES_CLIENT))
+SOURCES_CLIENT=$(wildcard $(SRC_CLIENT)/*.cpp)
+OBJECTS_CLIENT=$(patsubst $(SRC_CLIENT)/%.cpp,$(OBJ_CLIENT)/%.o,$(SOURCES_CLIENT))
 
-SOURCES_LIB=$(wildcard $(SRC_LIB)/*.c)
-OBJECTS_LIB=$(patsubst $(SRC_LIB)/%.c,$(OBJ_LIB)/%.o,$(SOURCES_LIB))
+SOURCES_LIB=$(wildcard $(SRC_LIB)/*.cpp)
+OBJECTS_LIB=$(patsubst $(SRC_LIB)/%.cpp,$(OBJ_LIB)/%.o,$(SOURCES_LIB))
 
 $(TARGET): $(OBJECTS_CLIENT) $(LIB_TARGET)
 	@mkdir -p $(dir $@)
@@ -28,11 +28,11 @@ clean:
 	rm -fv $(TARGET)
 	rm -fv $(LIB_TARGET)
 
-$(OBJ_CLIENT)/%.o: $(SRC_CLIENT)/%.c
+$(OBJ_CLIENT)/%.o: $(SRC_CLIENT)/%.cpp
 	@mkdir -p $(dir $@)
 	$(CC) -o $@ -c $< $(CFLAGS)
 
-$(OBJ_LIB)/%.o: $(SRC_LIB)/%.c
+$(OBJ_LIB)/%.o: $(SRC_LIB)/%.cpp
 	@mkdir -p $(dir $@)
 	$(CC) -o $@ -c $< $(CFLAGS)
 
