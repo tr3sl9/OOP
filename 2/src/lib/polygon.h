@@ -2,6 +2,7 @@
 #define POLYGON_H
 
 #include <algorithm>
+#include <ios>
 #include <iostream>
 #include <cmath>
 
@@ -33,11 +34,13 @@ public:
 
     Polygon& operator=(const Polygon& other) {
         if (this != &other) {
+            Polygon save_place(other);
             delete[] point_array_;
-            point_count_ = other.point_count_;
-            point_array_ = new Point[point_count_];
-            std::copy_n(other.point_array_, point_count_, point_array_);
+            point_array_ = save_place.point_array_;
+            save_place.point_array_ = nullptr;
+            point_count_ = save_place.point_count_;
         }
+
         return *this;
     }
     
@@ -57,7 +60,7 @@ public:
         return *this;
     }
 
-    Point centerOfMass() const {
+    Point centerOfMass() const noexcept {
         float sumX = 0;
         float sumY = 0;
         std::for_each(point_array_, point_array_ + point_count_, [&](Point &point) {
@@ -70,9 +73,7 @@ public:
 
     Polygon& operator+=(const Point& point) {
         Point* new_point_array = new Point[point_count_ + 1];
-        for (size_t i = 0; i < point_count_; i++) {
-            new_point_array[i] = point_array_[i];
-        }
+        std::copy_n(point_array_, point_count_, new_point_array);
         new_point_array[point_count_] = point;
         delete[] point_array_;
         point_array_ = new_point_array;
@@ -81,7 +82,10 @@ public:
         return *this;
     }
 
-    Point& operator[](size_t index) {
+    Point& operator[](size_t index) noexcept {
+        return point_array_[index];
+    }
+    const Point& operator[](size_t index) const noexcept {
         return point_array_[index];
     }
 
@@ -104,15 +108,17 @@ public:
         return;
     }
 
-    void move(const Point& vector) {
+    void move(const Point& vector) noexcept {
         for (size_t i = 0; i < point_count_; i++) {
             point_array_[i] = point_array_[i] + vector;
         }
+
+        return;
     }
 
-    friend std::ostream& operator<<(std::ostream& os, const Polygon& poly) {
+    friend std::ostream& operator<<(std::ostream& os, const Polygon& poly) noexcept {
         os << poly.point_count_ << " ";
-        for (int i = 0; i < poly.point_count_; ++i) {
+        for (size_t i = 0; i < poly.point_count_; ++i) {
             os << poly.point_array_[i] << " ";
         }
 
@@ -120,14 +126,18 @@ public:
     }
 
     friend std::istream& operator>>(std::istream& is, Polygon& poly) {
-        int numVertices;
-        is >> numVertices;
-        Point* points = new Point[numVertices];
-        for (int i = 0; i < numVertices; ++i) {
-            is >> points[i];
+        try{
+            int numVertices;
+            is >> numVertices;
+            Polygon polygon(numVertices);
+            for (size_t i = 0; i < numVertices; ++i) {
+                is >> polygon.point_array_[i];
+            }
+            poly = Polygon(numVertices, polygon.point_array_);
+            poly = std::move(polygon);
+        } catch(...) {
+            is.setstate(std::ios_base::failbit);        
         }
-        poly = Polygon(numVertices, points);
-        delete[] points;
 
         return is;
     }
