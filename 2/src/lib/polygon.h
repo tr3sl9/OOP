@@ -116,6 +116,10 @@ public:
         return;
     }
 
+    size_t getCount() const {
+        return point_count_;
+    }
+
     friend std::ostream& operator<<(std::ostream& os, const Polygon& poly) noexcept {
         os << poly.point_count_ << " ";
         for (size_t i = 0; i < poly.point_count_; ++i) {
