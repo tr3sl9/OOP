@@ -7,3 +7,5 @@ build
 .vscode/settings.json
 .clang*
 .cache*
+html/
+latex/
