@@ -1,5 +1,4 @@
 #include <iostream>
-#include "../lib/point.h"
 #include "dialog.h"
 
 int main() {
