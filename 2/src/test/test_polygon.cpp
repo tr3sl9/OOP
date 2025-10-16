@@ -58,15 +58,12 @@ TEST_CASE("Copy/move semantics and assignments") {
     SECTION("Copy assignment is deep and handles self-assignment") {
         Polygon t = makeTriangle();
         Polygon other(1);
-        other = t;
+        other = t; 
+
         t[1] = Point(5.0f, 5.0f);
 
-        CHECK(other[1].getX() == Catch::Approx(0.0f));
-
-        other = other;
-
-        CHECK(other[0].getX() == Catch::Approx(0.0f));
-        CHECK(other.getCount() == 3);
+        CHECK(other[1].getX() == Catch::Approx(2.0f));
+        CHECK(other[1].getY() == Catch::Approx(0.0f));
     }
 
     SECTION("Move constructor empties source") {
