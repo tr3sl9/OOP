@@ -23,25 +23,23 @@ void Point::setY(float y) {
 }
 
 float Point::distanceTo(const Point& other) const {
-    return sqrt((x - other.x) * (x - other.x) + (y - other.y) * (y - other.y));
+    return sqrtf((x - other.x) * (x - other.x) + (y - other.y) * (y - other.y));
 }
 
 Point Point::operator+(const Point& other) const {
     return Point(x + other.x, y + other.y);
-    }
+}
 
-    Point Point::operator-(const Point& other) const {
-        return Point(x - other.x, y - other.y);
-    }
+Point Point::operator-(const Point& other) const {
+   return Point(x - other.x, y - other.y);
+}
 
-    Point Point::operator/(float divisior) const {
-        return Point(x / divisior, y / divisior);
-    }
+Point Point::operator/(float divisor) const {
+   return Point(x / divisor, y / divisor);
+}
 
 void Point::rotate90Clockwise() {
-    float temp = x;
-    x = y;
-    y = temp;
+    std::swap(x, y);
     return;
 } 
 

@@ -3,7 +3,7 @@
 
 int main() {
     try {
-        Dialog::run();
+        Dialog::run_polygon();
     }
     catch (const std::exception& e) {
         std::cerr << "Произошла ошибка: " << e.what() << std::endl;
