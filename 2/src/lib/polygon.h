@@ -7,9 +7,12 @@
 #define POLYGON_H
 
 #include <algorithm>
+#include <cstdlib>
 #include <ios>
 #include <iostream>
 #include <cmath>
+#include <stdexcept>
+#include <utility>
 
 #include "point.h"
 
@@ -118,7 +121,7 @@ public:
      * @brief Вычислить центр масс многоугольника
      * @return Точка - центр масс (среднее арифметическое всех вершин)
      */
-    Point centerOfMass() const noexcept {
+    Point centerOfMass() const {
         float sumX = 0;
         float sumY = 0;
         std::for_each(point_array_, point_array_ + point_count_, [&](Point &point) {
@@ -150,7 +153,10 @@ public:
      * @param index Индекс вершины
      * @return Ссылка на вершину
      */
-    Point& operator[](size_t index) noexcept {
+    Point& operator[](size_t index) {
+        if (index > point_count_ - 1) {
+            throw std::out_of_range("index");
+        }
         return point_array_[index];
     }
     
@@ -159,7 +165,10 @@ public:
      * @param index Индекс вершины
      * @return Константная ссылка на вершину
      */
-    const Point& operator[](size_t index) const noexcept {
+    const Point& operator[](size_t index) const {
+        if (index > point_count_ - 1) {
+            throw std::out_of_range("index");
+        }
         return point_array_[index];
     }
 
