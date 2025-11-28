@@ -5,30 +5,21 @@
 #include <string>
 #include <vector>
 
-typedef enum categoryStudent {
-    junior = 1,
-    senior = 2,
-    student = 3
-} categoryStudent;
+#include "studentInterface.h"
 
-
-class Student {
+class Student :  public IGradeProvider, public IStudentProvider {
     protected:
         std::string fullname_;
         std::vector<int> grades_;
     public:
         Student(); 
         explicit Student(std::string fullname) : fullname_(std::move(fullname)) {}
-        Student(const Student& other) = default;
-        Student(Student&& other) = default;
-        Student& operator=(const Student& other) = default;
-        Student& operator=(Student&& other) = default;
         virtual ~Student() = default;
 
-        virtual std::string getFullName() const noexcept { return fullname_; }
-        virtual void addGrade(int g) { grades_.push_back(g); }
-        virtual std::vector<int> getGrades() const noexcept { return grades_; }
-        virtual categoryStudent studentType() const noexcept { return student; }
+        std::string getFullName() const noexcept override { return fullname_; }
+        void addGrade(int g) noexcept override { grades_.push_back(g); }
+        std::vector<int> getGrades() const override { return grades_; }
+        CategoryStudent getStudentType() const override { return STUDENT; }
         double average() const { 
             if (grades_.empty()) {
                 return 0;

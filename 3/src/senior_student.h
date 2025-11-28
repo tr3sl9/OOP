@@ -1,10 +1,10 @@
 #ifndef SENIOR_STRDENT_H
 #define SENIOR_STRDENT_H
 
-#include "student.h" 
-#include <string>
+#include "seniorInterface.h"
+#include "student.h"
 
-class SeniorStudent : public Student {
+class SeniorStudent : public Student, public ERWProvider {
     private: 
         std::string ERW_;
         std::string placeERW_;
@@ -12,14 +12,14 @@ class SeniorStudent : public Student {
     public: 
         explicit SeniorStudent(const std::string fullname) : Student(fullname) {};
 
-        categoryStudent studentType() const noexcept override { return senior; }
+        CategoryStudent getStudentType() const override { return SENIOR; }
 
-        void setERW(const std::string& ERW) { ERW_ = ERW; }
-        std::string getERW() const noexcept { return ERW_; }
-        void setPlace(const std::string& placeERW) {placeERW_ = placeERW; }
-        std::string getPlaceERW() const noexcept { return placeERW_; }
+        void setERWName(const std::string& ERW) noexcept override { ERW_ = ERW; }
+        std::string getERWName() const override { return ERW_; }
+        void setPlace(const std::string& placeERW) noexcept override {placeERW_ = placeERW; }
+        std::string getPlaceERW() const override { return placeERW_; }
         void setGrade(int grade) { grade_ = grade; }
-        int getGrade() const noexcept { return grade_; }    
+        int getGrade() const override { return grade_; }    
 }; 
 
 #endif

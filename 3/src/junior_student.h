@@ -5,9 +5,9 @@
 
 class JuniorStudent : public Student {
     public: 
-        explicit JuniorStudent(const std::string fullname) : Student(fullname) {};
+        explicit JuniorStudent(const std::string fullname) : Student(fullname) {}
 
-        categoryStudent studentType() const noexcept override { return junior; }
+        CategoryStudent getStudentType() const override { return JUNIOR; }
 };
 
 #endif
