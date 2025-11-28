@@ -4,30 +4,73 @@
 #include <numeric>
 #include <string>
 #include <vector>
+#include <memory>
 
 #include "studentInterface.h"
 
-class Student :  public IGradeProvider, public IStudentProvider {
-    protected:
-        std::string fullname_;
-        std::vector<int> grades_;
-    public:
-        Student(); 
-        explicit Student(std::string fullname) : fullname_(std::move(fullname)) {}
-        virtual ~Student() = default;
+/**
+ * @brief Базовый класс студента
+ * 
+ * Представляет базовую информацию о студенте: фамилию и инициалы,
+ * а также список оценок.
+ */
+class Student : public IStudentProvider {
+protected:
+    std::string fullname_;
+    std::vector<int> grades_;
 
-        std::string getFullName() const noexcept override { return fullname_; }
-        void addGrade(int g) noexcept override { grades_.push_back(g); }
-        std::vector<int> getGrades() const override { return grades_; }
-        CategoryStudent getStudentType() const override { return STUDENT; }
-        double average() const { 
-            if (grades_.empty()) {
-                return 0;
-            }
+public:
+    /**
+     * @brief Конструктор по умолчанию
+     */
+    Student();
+    
+    /**
+     * @brief Конструктор с параметром
+     * @param fullname Фамилия и инициалы студента
+     */
+    explicit Student(const std::string& fullname);
+    
+    /**
+     * @brief Виртуальный деструктор
+     */
+    virtual ~Student() = default;
 
-            return std::accumulate(grades_.begin(), grades_.end(), 0) / static_cast<double>(grades_.size());
-        }
-        
+    /**
+     * @brief Получить полное имя студента
+     * @return Фамилия и инициалы
+     */
+    std::string getFullName() const noexcept override;
+    
+    /**
+     * @brief Добавить оценку
+     * @param g Оценка
+     */
+    void addGrade(int g) noexcept override;
+    
+    /**
+     * @brief Получить список оценок
+     * @return Вектор оценок
+     */
+    std::vector<int> getGrades() const override;
+    
+    /**
+     * @brief Получить тип студента
+     * @return Категория студента
+     */
+    CategoryStudent getStudentType() const override;
+    
+    /**
+     * @brief Установить тип студента
+     * @param type Категория студента
+     */
+    void setStudentType(CategoryStudent type) noexcept override;
+    
+    /**
+     * @brief Вычислить средний балл
+     * @return Средний балл студента
+     */
+    double average() const;
 };
 
 #endif
