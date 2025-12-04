@@ -46,7 +46,7 @@ public:
      * @brief Добавить оценку
      * @param g Оценка
      */
-    void addGrade(int g) noexcept override;
+    void addGrade(int g) override;
     
     /**
      * @brief Получить список оценок
@@ -58,7 +58,7 @@ public:
      * @brief Получить тип студента
      * @return Категория студента
      */
-    CategoryStudent getStudentType() const override;
+    CategoryStudent getStudentType() const noexcept override;
     
     /**
      * @brief Установить тип студента

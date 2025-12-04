@@ -12,7 +12,7 @@ std::string Student::getFullName() const noexcept {
     return fullname_;
 }
 
-void Student::addGrade(int g) noexcept {
+void Student::addGrade(int g) {
     grades_.push_back(g);
 }
 

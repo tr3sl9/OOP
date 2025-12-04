@@ -38,7 +38,7 @@ public:
      * @brief Установить название УИР
      * @param ERW Направление темы УИР
      */
-    void setERWName(const std::string& ERW) noexcept override;
+    void setERWName(const std::string& ERW) override;
     
     /**
      * @brief Получить название УИР
@@ -50,7 +50,7 @@ public:
      * @brief Установить место выполнения УИР
      * @param placeERW Место выполнения
      */
-    void setPlace(const std::string& placeERW) noexcept override;
+    void setPlace(const std::string& placeERW) override;
     
     /**
      * @brief Получить место выполнения УИР

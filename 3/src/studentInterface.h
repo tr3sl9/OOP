@@ -24,13 +24,13 @@ public:
      * @brief Получить полное имя студента
      * @return Фамилия и инициалы
      */
-    virtual std::string getFullName() const = 0;
+    virtual std::string getFullName() const noexcept = 0;
     
     /**
      * @brief Добавить оценку
      * @param g Оценка
      */
-    virtual void addGrade(int g) noexcept = 0;
+    virtual void addGrade(int g) = 0;
     
     /**
      * @brief Получить список оценок
@@ -42,7 +42,7 @@ public:
      * @brief Получить тип студента
      * @return Категория студента
      */
-    virtual CategoryStudent getStudentType() const = 0;
+    virtual CategoryStudent getStudentType() const noexcept = 0;
     
     /**
      * @brief Установить тип студента
