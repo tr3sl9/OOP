@@ -1,0 +1,95 @@
+#ifndef UNIVERSITY_H
+#define UNIVERSITY_H
+
+#include "group.h"
+#include "groupInterface.h"
+#include "../hash_table.h"
+
+#include <memory>
+#include <string>
+#include <vector>
+
+// Forward declaration
+class Group;
+
+/**
+ * @brief Класс университета
+ * 
+ * Управляет таблицей групп студентов.
+ * Реализует интерфейс TableProvider для работы с группами.
+ */
+class University : public TableProvider {
+private:
+    HashTable<std::shared_ptr<Group>, std::string> hashTable_;
+    
+    /**
+     * @brief Извлечь ключ (ID группы) из группы
+     */
+    static std::string extractKey(const std::shared_ptr<Group>& group);
+
+public:
+    /**
+     * @brief Конструктор
+     */
+    explicit University(size_t bucket_count = 101);
+    
+    /**
+     * @brief Деструктор
+     */
+    ~University() = default;
+    
+    /**
+     * @brief Найти группу по ID
+     * @param ID Индекс группы
+     * @return Указатель на группу или nullptr
+     */
+    std::shared_ptr<Group> findGroup(const std::string& ID) const;
+    
+    /**
+     * @brief Получить количество групп
+     * @return Количество групп
+     */
+    size_t getGroupCount() const noexcept;
+    
+    /**
+     * @brief Получить все группы
+     * @return Вектор указателей на группы
+     */
+    std::vector<std::shared_ptr<Group>> getAllGroups() const;
+    
+    /**
+     * @brief Получить итератор начала
+     * @return Итератор на первый элемент
+     */
+    HashTable<std::shared_ptr<Group>, std::string>::iterator begin();
+    
+    /**
+     * @brief Получить итератор конца
+     * @return Итератор за последним элементом
+     */
+    HashTable<std::shared_ptr<Group>, std::string>::iterator end();
+
+    /**
+     * @brief Получить константный итератор начала
+     * @return Константный итератор на первый элемент
+     */
+    HashTable<std::shared_ptr<Group>, std::string>::const_iterator begin() const;
+    
+    /**
+     * @brief Получить константный итератор конца
+     * @return Константный итератор за последним элементом
+     */
+    HashTable<std::shared_ptr<Group>, std::string>::const_iterator end() const;
+    
+    // TableProvider interface
+    void addGroup(const std::string& ID, int maxCountDisciplines, CategoryStudent type) override;
+    void removeGroup(const std::string& ID) override;
+    void updateGroup(const std::string& ID) override;
+    void showGroup(const std::string& ID) const override;
+    void* getTable() const override;
+    std::string getID() const override;
+    size_t getCount() const override;
+};
+
+#endif
+
