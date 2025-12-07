@@ -1,4 +1,4 @@
-#include "junior_student.h"
+#include "juniorStudent.h"
 
 JuniorStudent::JuniorStudent(const std::string& fullname) : Student(fullname) {
 }

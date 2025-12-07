@@ -1,4 +1,4 @@
-#include "senior_student.h"
+#include "seniorStudent.h"
 
 SeniorStudent::SeniorStudent(const std::string& fullname) 
     : Student(fullname), ERW_(""), placeERW_(""), gradeERW_(0) {
