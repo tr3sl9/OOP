@@ -1,5 +1,6 @@
 #include "studentTable.h"
 #include <algorithm>
+#include <iostream>
 
 std::string StudentTable::extractKey(const std::shared_ptr<Student>& student) {
     if (!student) {
@@ -15,7 +16,12 @@ void StudentTable::addStudent(std::shared_ptr<Student> student) {
         return;
     }
     std::string key = student->getFullName();
-    table_.insert(student, key);
+    auto keyExtractor = [](const std::shared_ptr<Student>& s) -> std::string {
+        return s ? s->getFullName() : "";
+    };
+    if (!table_.insert(student, key, keyExtractor)) {
+        std::cout << "Студент \"" << key << "\" уже существует. Добавление пропущено.\n";
+    }
 }
 
 void StudentTable::removeStudent(const std::string& fullname) {

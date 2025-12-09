@@ -5,6 +5,7 @@
 #include "groupInterface.h"
 #include "../template/hashTable.h"
 
+#include <functional>
 #include <memory>
 #include <string>
 #include <vector>
@@ -27,6 +28,12 @@ private:
      * @brief Извлечь ключ (ID группы) из группы
      */
     static std::string extractKey(const std::shared_ptr<Group>& group);
+    
+    /**
+     * @brief Создать функцию-экстрактор ключа для работы с хеш-таблицей
+     * @return Функция, которая извлекает ключ (ID) из группы
+     */
+    static std::function<std::string(const std::shared_ptr<Group>&)> createGroupKeyExtractor();
 
 public:
     /**

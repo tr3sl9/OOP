@@ -10,19 +10,22 @@ std::string University::extractKey(const std::shared_ptr<Group>& group) {
     return group->getID();
 }
 
+std::function<std::string(const std::shared_ptr<Group>&)> University::createGroupKeyExtractor() {
+    return extractKey;
+}
+
 University::University(size_t bucket_count) : hashTable_(bucket_count) {
 }
 
 void University::addGroup(const std::string& ID, int maxCountDisciplines, CategoryStudent type) {
     auto group = std::make_shared<Group>(ID, maxCountDisciplines, type);
-    hashTable_.insert(group, ID);
+    if (!hashTable_.insert(group, ID, createGroupKeyExtractor())) {
+        std::cout << "Группа с ID " << ID << " уже существует." << std::endl;
+    }
 }
 
 void University::removeGroup(const std::string& ID) {
-    auto keyExtractor = [](const std::shared_ptr<Group>& g) -> std::string {
-        return g ? g->getID() : "";
-    };
-    hashTable_.erase(ID, keyExtractor);
+    hashTable_.erase(ID, createGroupKeyExtractor());
 }
 
 void University::updateGroup(const std::string& ID) {
@@ -55,11 +58,8 @@ size_t University::getCount() const {
 }
 
 std::shared_ptr<Group> University::findGroup(const std::string& ID) const {
-    auto keyExtractor = [](const std::shared_ptr<Group>& g) -> std::string {
-        return g ? g->getID() : "";
-    };
     auto* result = const_cast<HashTable<std::shared_ptr<Group>, std::string>*>(&hashTable_)
-        ->find(ID, keyExtractor);
+        ->find(ID, createGroupKeyExtractor());
     return result ? *result : nullptr;
 }
 
