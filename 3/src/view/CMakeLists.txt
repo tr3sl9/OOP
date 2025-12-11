@@ -13,6 +13,3 @@ target_link_libraries(view PUBLIC
     repository
 )
 
-target_compile_options(view PRIVATE --coverage)
-target_link_options(view PRIVATE --coverage)
-

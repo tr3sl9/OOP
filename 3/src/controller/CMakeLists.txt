@@ -16,6 +16,3 @@ target_link_libraries(controller PUBLIC
     view
 )
 
-target_compile_options(controller PRIVATE --coverage)
-target_link_options(controller PRIVATE --coverage)
-

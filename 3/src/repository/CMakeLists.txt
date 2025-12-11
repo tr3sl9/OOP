@@ -18,6 +18,3 @@ target_link_libraries(repository PUBLIC
     template
 )
 
-target_compile_options(repository PRIVATE --coverage)
-target_link_options(repository PRIVATE --coverage)
-
