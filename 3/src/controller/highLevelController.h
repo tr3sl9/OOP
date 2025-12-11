@@ -37,8 +37,8 @@ public:
  */
 class HighLevelController : public ControllerProvider {
 private:
-    University* university_;
-    ITableView* view_;
+    University* university_{nullptr};
+    ITableView* view_{nullptr};
     
     /// Подсчитать количество двоек у студента
     int countFailures(const Student* student) const;

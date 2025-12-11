@@ -26,6 +26,10 @@ int HighLevelController::countFailures(const Student* student) const {
 
 void HighLevelController::applyStudentAdmission(const std::string& groupID, const std::string& fullname, int gradeCount) {
     (void)gradeCount;
+    if (!university_) {
+        return;
+    }
+
     auto group = university_->findGroup(groupID);
     if (!group) {
         if (view_) {
@@ -52,6 +56,10 @@ void HighLevelController::applyStudentAdmission(const std::string& groupID, cons
 
 void HighLevelController::transitionStudentCourse(const std::string& groupID, const std::string& fullname, int newGradeCount) {
     (void)newGradeCount;
+    if (!university_) {
+        return;
+    }
+
     auto group = university_->findGroup(groupID);
     if (!group) {
         if (view_) {
@@ -82,6 +90,10 @@ void HighLevelController::transitionStudentCourse(const std::string& groupID, co
 }
 
 void HighLevelController::semesterControl(const std::string& groupID) {
+    if (!university_) {
+        return;
+    }
+
     auto group = university_->findGroup(groupID);
 
     if (!group) {
@@ -111,6 +123,10 @@ void HighLevelController::semesterControl(const std::string& groupID) {
 }
 
 double HighLevelController::averageGroupGrade(const std::string& groupID) {
+    if (!university_) {
+        return 0.0;
+    }
+
     auto group = university_->findGroup(groupID);
 
     if (!group) {
@@ -154,6 +170,10 @@ double HighLevelController::averageGroupGrade(const std::string& groupID) {
 
 std::vector<std::shared_ptr<Student>> HighLevelController::laggingStudents(const std::string& groupID) {
     std::vector<std::shared_ptr<Student>> lagging;
+    
+    if (!university_) {
+        return lagging;
+    }
     
     std::vector<std::shared_ptr<Group>> groups;
     if (groupID.empty()) {
