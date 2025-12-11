@@ -58,13 +58,16 @@ void InputController::processCommand(const std::string& command, const std::vect
         return;
     }
 
+    University* university = university_;
+    ControllerProvider* controller = controller_;
+
     struct Command {
         const char* name;
         const char* usage;
         std::function<void(const std::vector<std::string>&)> action;
     };
 
-    static const std::array<Command, 10> commands = {{
+    const std::array<Command, 10> commands = {{
         {"help", "help", [](const std::vector<std::string>&) {
             std::cout << "Команды:\n"
                       << "  help\n"
@@ -79,7 +82,7 @@ void InputController::processCommand(const std::string& command, const std::vect
                       << "  exit\n";
         }},
         
-        {"add_group", "add_group <id> <max_disciplines> <type>", [this](const std::vector<std::string>& a) {
+        {"add_group", "add_group <id> <max_disciplines> <type>", [university](const std::vector<std::string>& a) {
             if (a.size() < 3) { 
                 std::cout << "Использование: add_group <id> <max_disciplines> <type>\n"; return; 
             }
@@ -96,24 +99,24 @@ void InputController::processCommand(const std::string& command, const std::vect
                 type = CategoryStudent::SENIOR;
             }
 
-            university_->addGroup(id, maxDisc, type);
+            university->addGroup(id, maxDisc, type);
             std::cout << "Группа " << id << " добавлена\n";
         }},
 
-        {"add_student", "add_student <group_id> <fullname>", [this](const std::vector<std::string>& a) {
+        {"add_student", "add_student <group_id> <fullname>", [controller](const std::vector<std::string>& a) {
             if (a.size() < 2) { 
                 std::cout << "Использование: add_student <group_id> <fullname>\n"; return; 
             }
 
-            controller_->applyStudentAdmission(a[0], a[1], 0);
+            controller->applyStudentAdmission(a[0], a[1], 0);
         }},
 
-        {"del_student", "del_student <group_id> <fullname>", [this](const std::vector<std::string>& a) {
+        {"del_student", "del_student <group_id> <fullname>", [university](const std::vector<std::string>& a) {
             if (a.size() < 2) {
                 std::cout << "Использование: del_student <group_id> <fullname>\n"; return;
             }
 
-            auto g = university_->findGroup(a[0]);
+            auto g = university->findGroup(a[0]);
             if (!g) {
                 std::cout << "Группа " << a[0] << " не найдена\n"; return;
             }
@@ -127,33 +130,33 @@ void InputController::processCommand(const std::string& command, const std::vect
             std::cout << "Студент \"" << a[1] << "\" удалён из группы " << a[0] << "\n";
         }},
 
-        {"semester", "semester <group_id>", [this](const std::vector<std::string>& a) {
+        {"semester", "semester <group_id>", [controller](const std::vector<std::string>& a) {
             if (a.empty()) { 
                 std::cout << "Использование: semester <group_id>\n"; return; 
             }
 
-            controller_->semesterControl(a[0]);
+            controller->semesterControl(a[0]);
         }},
 
-        {"avg", "avg <group_id>", [this](const std::vector<std::string>& a) {
+        {"avg", "avg <group_id>", [controller](const std::vector<std::string>& a) {
             if (a.empty()) { 
                 std::cout << "Использование: avg <group_id>\n"; return;
             }
 
-            controller_->averageGroupGrade(a[0]);
+            controller->averageGroupGrade(a[0]);
         }},
 
-        {"lagging", "lagging [group_id]", [this](const std::vector<std::string>& a) {
+        {"lagging", "lagging [group_id]", [controller](const std::vector<std::string>& a) {
             const std::string group = a.empty() ? "" : a[0];
-            controller_->laggingStudents(group);
+            controller->laggingStudents(group);
         }},
 
-        {"show_group", "show_group <group_id>", [this](const std::vector<std::string>& a) {
+        {"show_group", "show_group <group_id>", [university](const std::vector<std::string>& a) {
             if (a.empty()) { 
                 std::cout << "Использование: show_group <group_id>\n"; return;
             }
             
-            auto g = university_->findGroup(a[0]);
+            auto g = university->findGroup(a[0]);
             if (g) {
                 std::cout << "Группа: " << g->getID() << ", студентов: " << g->getStudentCount() << "\n";
             } else {
@@ -161,8 +164,8 @@ void InputController::processCommand(const std::string& command, const std::vect
             }
         }},
 
-        {"show_all", "show_all", [this](const std::vector<std::string>&) {
-            auto groups = university_->getAllGroups();
+        {"show_all", "show_all", [university](const std::vector<std::string>&) {
+            auto groups = university->getAllGroups();
             if (groups.empty()) {
                 std::cout << "Нет групп\n"; 
                 return;
