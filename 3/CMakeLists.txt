@@ -11,10 +11,12 @@ endif()
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-    add_compile_options(-fanalyzer)
-elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
-    add_compile_options(-fanalyzer)
+option(ENABLE_ANALYZER "Enable static analyzer" OFF)
+if(ENABLE_ANALYZER)
+    if(CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
+        add_compile_options(-fanalyzer)
+        message(STATUS "Static analyzer enabled (may produce false positives)")
+    endif()
 endif()
 
 add_subdirectory(src/lib)
