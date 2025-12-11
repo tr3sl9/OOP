@@ -89,6 +89,12 @@ public:
      */
     HashTable<std::shared_ptr<Group>, std::string>::const_iterator end() const;
     
+    /**
+     * @brief Получить общее количество студентов во всех группах
+     * @return Общее количество студентов
+     */
+    size_t getTotalStudentCount() const;
+    
     // TableProvider interface
     void addGroup(const std::string& ID, int maxCountDisciplines, CategoryStudent type) override;
     void removeGroup(const std::string& ID) override;
@@ -97,6 +103,31 @@ public:
     void* getTable() const override;
     std::string getID() const override;
     size_t getCount() const override;
+    
+    // Перегруженные версии updateGroup для изменения различных параметров
+    /**
+     * @brief Обновить ID группы
+     * @param oldID Старый ID группы
+     * @param newID Новый ID группы
+     * @return true если обновление успешно, false если группа не найдена или новый ID уже существует
+     */
+    bool updateGroup(const std::string& oldID, const std::string& newID);
+    
+    /**
+     * @brief Обновить максимальное количество дисциплин группы
+     * @param ID ID группы
+     * @param maxCountDisciplines Новое максимальное количество дисциплин
+     * @return true если обновление успешно, false если группа не найдена
+     */
+    bool updateGroup(const std::string& ID, int maxCountDisciplines);
+    
+    /**
+     * @brief Обновить тип группы
+     * @param ID ID группы
+     * @param type Новый тип группы
+     * @return true если обновление успешно, false если группа не найдена
+     */
+    bool updateGroup(const std::string& ID, CategoryStudent type);
 };
 
 #endif

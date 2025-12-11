@@ -28,11 +28,67 @@ void University::removeGroup(const std::string& ID) {
     hashTable_.erase(ID, createGroupKeyExtractor());
 }
 
-void University::updateGroup(const std::string& ID) {
-    auto group = findGroup(ID);
-    if (group) {
-        //обновить группу 
+size_t University::getTotalStudentCount() const {
+    size_t total = 0;
+    for (auto it = begin(); it != end(); ++it) {
+        if (*it) {
+            total += (*it)->getStudentCount();
+        }
     }
+    return total;
+}
+
+bool University::updateGroup(const std::string& oldID, const std::string& newID) {
+    auto group = findGroup(oldID);
+
+    if (!group) {
+        std::cout << "Группа с ID " << oldID << " не найдена." << std::endl;
+        return false;
+    }
+    
+    if (findGroup(newID)) {
+        std::cout << "Группа с ID " << newID << " уже существует." << std::endl;
+        return false;
+    }
+    
+    hashTable_.erase(oldID, createGroupKeyExtractor());
+    
+    group->setID(newID);
+    
+    if (!hashTable_.insert(group, newID, createGroupKeyExtractor())) {
+        std::cout << "Ошибка при обновлении ID группы." << std::endl;
+        return false;
+    }
+    
+    std::cout << "ID группы изменен с " << oldID << " на " << newID << std::endl;
+    return true;
+}
+
+bool University::updateGroup(const std::string& ID, int maxCountDisciplines) {
+    auto group = findGroup(ID);
+
+    if (!group) {
+        std::cout << "Группа с ID " << ID << " не найдена." << std::endl;
+        return false;
+    }
+    
+    group->setMaxCountDisciplines(maxCountDisciplines);
+    std::cout << "Максимальное количество дисциплин для группы " << ID 
+              << " изменено на " << maxCountDisciplines << std::endl;
+    return true;
+}
+
+bool University::updateGroup(const std::string& ID, CategoryStudent type) {
+    auto group = findGroup(ID);
+
+    if (!group) {
+        std::cout << "Группа с ID " << ID << " не найдена." << std::endl;
+        return false;
+    }
+    
+    group->setGroupType(type);
+    std::cout << "Тип группы " << ID << " изменен." << std::endl;
+    return true;
 }
 
 void University::showGroup(const std::string& ID) const {
@@ -49,7 +105,6 @@ void* University::getTable() const {
 }
 
 std::string University::getID() const {
-    // Для университета ID не применим, возвращаем пустую строку
     return "";
 }
 
