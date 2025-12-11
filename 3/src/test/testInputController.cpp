@@ -87,6 +87,7 @@ TEST_CASE("InputController: обработка пустой строки", "[inp
     HighLevelController highController(&university, &view);
     InputController controller(&university, &highController);
     
-    REQUIRE_NOTHROW(controller.processInput(""));
+    std::string emptyStr;
+    REQUIRE_NOTHROW(controller.processInput(emptyStr));
 }
 
