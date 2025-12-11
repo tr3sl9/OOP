@@ -98,7 +98,6 @@ public:
     // TableProvider interface
     void addGroup(const std::string& ID, int maxCountDisciplines, CategoryStudent type) override;
     void removeGroup(const std::string& ID) override;
-    void updateGroup(const std::string& ID) override;
     void showGroup(const std::string& ID) const override;
     void* getTable() const override;
     std::string getID() const override;
