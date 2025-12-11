@@ -112,12 +112,6 @@ public:
     virtual void removeGroup(const std::string& ID) = 0;
     
     /**
-     * @brief Обновить группу
-     * @param ID Индекс группы
-     */
-    virtual void updateGroup(const std::string& ID) = 0;
-    
-    /**
      * @brief Показать группу
      * @param ID Индекс группы
      */
