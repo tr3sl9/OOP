@@ -11,7 +11,6 @@
 #include <algorithm>
 #include <cctype>
 #include <iostream>
-#include <cstdlib>
 #include <array>
 #include <functional>
 
@@ -50,12 +49,12 @@ std::vector<std::string> InputController::tokenize(const std::string& input) con
     return tokens;
 }
 
-void InputController::processCommand(const std::string& command, const std::vector<std::string>& args) noexcept {
+bool InputController::processCommand(const std::string& command, const std::vector<std::string>& args) noexcept {
     const std::string cmd = toLower(command);
 
     if (!controller_ || !university_) {
         std::cout << "Контроллер не инициализирован\n";
-        return;
+        return false;
     }
 
     University* university = university_;
@@ -66,6 +65,8 @@ void InputController::processCommand(const std::string& command, const std::vect
         const char* usage;
         std::function<void(const std::vector<std::string>&)> action;
     };
+
+    bool shouldExit = false;
 
     const std::array<Command, 10> commands = {{
         {"help", "help", [](const std::vector<std::string>&) {
@@ -197,31 +198,32 @@ void InputController::processCommand(const std::string& command, const std::vect
             std::cout << std::endl;
         }},
 
-        {"exit", "exit", [](const std::vector<std::string>&) {
+        {"exit", "exit", [&shouldExit](const std::vector<std::string>&) {
             std::cout << "Завершение работы.\n";
-            std::exit(0);
+            shouldExit = true;
         }}
     }};
 
     for (const auto& c : commands) {
         if (cmd == c.name) {
             c.action(args);
-            return;
+            return shouldExit;
         }
     }
 
     std::cout << "Неизвестная команда: " << command << ". Введите help\n";
+    return shouldExit;
 }
 
-void InputController::processInput(const std::string& input) {
+bool InputController::processInput(const std::string& input) {
     auto tokens = tokenize(input);
     if (tokens.empty()) {
-        return;
+        return false;
     }
     
     std::string command = tokens[0];
     std::vector<std::string> args(tokens.begin() + 1, tokens.end());
     
-    processCommand(command, args);
+    return processCommand(command, args);
 }
 

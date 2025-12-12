@@ -70,7 +70,9 @@ int main() {
             }
             
             try {
-                inputController->processInput(line);
+                if (inputController->processInput(line)) {
+                    running = false;
+                }
             } catch (const std::exception& e) {
                 view->printError("Ошибка при обработке команды: " + std::string(e.what()));
             } catch (...) {

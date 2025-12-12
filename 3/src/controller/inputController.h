@@ -20,7 +20,7 @@ public:
      * @brief Обработать ввод
      * @param input Входная строка
      */
-    virtual void processInput(const std::string& input) = 0;
+    virtual bool processInput(const std::string& input) = 0;
 };
 
 /**
@@ -36,7 +36,7 @@ private:
      * @param command Команда
      * @param args Аргументы команды
      */
-    void processCommand(const std::string& command, const std::vector<std::string>& args) noexcept;
+    bool processCommand(const std::string& command, const std::vector<std::string>& args) noexcept;
     
     /**
      * @brief Разбить строку на токены
@@ -62,7 +62,7 @@ public:
      * @brief Обработать ввод
      * @param input Входная строка
      */
-    void processInput(const std::string& input) override;
+    bool processInput(const std::string& input) override;
 };
 
 #endif
