@@ -64,12 +64,12 @@ TEST_CASE("SeniorStudent: создание и базовые операции", 
 TEST_CASE("SeniorStudent: работа с УИР", "[senior]") {
     SeniorStudent senior("УИР У.У.");
     
-    senior.setERWName("Машинное обучение");
-    senior.setPlace("Кафедра ИУ");
+    senior.setERWName("ИИ дебилы");
+    senior.setPlace("Кафедра 22");
     senior.setERWGrade(5);
     
-    REQUIRE(senior.getERWName() == "Машинное обучение");
-    REQUIRE(senior.getPlaceERW() == "Кафедра ИУ");
+    REQUIRE(senior.getERWName() == "ИИ дебилы");
+    REQUIRE(senior.getPlaceERW() == "Кафедра 22");
     REQUIRE(senior.getERWGrade() == 5);
     REQUIRE(senior.getGrade() == 5);
 }

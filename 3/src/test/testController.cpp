@@ -14,18 +14,18 @@ TEST_CASE("HighLevelController: зачисление студента", "[contro
     TableDialogView view;
     HighLevelController controller(&university, &view);
     
-    university.addGroup("ГР-01", 5, CategoryStudent::JUNIOR);
+    university.addGroup("С24-501", 5, CategoryStudent::JUNIOR);
     
-    controller.applyStudentAdmission("ГР-01", "Новый Н.Н.", 5);
+    controller.applyStudentAdmission("С24-501", "Симоненко М.В.", 5);
     
-    auto group = university.findGroup("ГР-01");
+    auto group = university.findGroup("С24-501");
     REQUIRE(group != nullptr);
     REQUIRE(group->getStudentCount() == 1);
     
     auto table = group->getTable();
-    auto student = table->findStudent("Новый Н.Н.");
+    auto student = table->findStudent("Симоненко М.В.");
     REQUIRE(student != nullptr);
-    REQUIRE(student->getFullName() == "Новый Н.Н.");
+    REQUIRE(student->getFullName() == "Симоненко М.В.");
 }
 
 TEST_CASE("HighLevelController: средний балл группы", "[controller]") {
@@ -33,12 +33,12 @@ TEST_CASE("HighLevelController: средний балл группы", "[control
     TableDialogView view;
     HighLevelController controller(&university, &view);
     
-    university.addGroup("ГР-01", 5, CategoryStudent::JUNIOR);
+    university.addGroup("С24-501", 5, CategoryStudent::JUNIOR);
     
-    controller.applyStudentAdmission("ГР-01", "Студент1 С.С.", 5);
-    controller.applyStudentAdmission("ГР-01", "Студент2 С.С.", 5);
+    controller.applyStudentAdmission("С24-501", "Студент1 С.С.", 5);
+    controller.applyStudentAdmission("С24-501", "Студент2 С.С.", 5);
     
-    auto group = university.findGroup("ГР-01");
+    auto group = university.findGroup("С24-501");
     auto table = group->getTable();
     
     auto student1 = table->findStudent("Студент1 С.С.");
@@ -49,7 +49,7 @@ TEST_CASE("HighLevelController: средний балл группы", "[control
     student2->addGrade(3);
     student2->addGrade(4);
     
-    double avg = controller.averageGroupGrade("ГР-01");
+    double avg = controller.averageGroupGrade("С24-501");
     REQUIRE(avg == Catch::Approx(4.0).margin(0.01));
 }
 
@@ -58,13 +58,13 @@ TEST_CASE("HighLevelController: поиск отстающих студентов
     TableDialogView view;
     HighLevelController controller(&university, &view);
     
-    university.addGroup("ГР-01", 5, CategoryStudent::JUNIOR);
+    university.addGroup("С24-501", 5, CategoryStudent::JUNIOR);
     
-    controller.applyStudentAdmission("ГР-01", "Отстающий1 О.О.", 5);
-    controller.applyStudentAdmission("ГР-01", "Отстающий2 О.О.", 5);
-    controller.applyStudentAdmission("ГР-01", "Успевающий У.У.", 5);
+    controller.applyStudentAdmission("С24-501", "Отстающий1 О.О.", 5);
+    controller.applyStudentAdmission("С24-501", "Отстающий2 О.О.", 5);
+    controller.applyStudentAdmission("С24-501", "Успевающий У.У.", 5);
     
-    auto group = university.findGroup("ГР-01");
+    auto group = university.findGroup("С24-501");
     auto table = group->getTable();
     
     auto lagging1 = table->findStudent("Отстающий1 О.О.");
@@ -93,15 +93,15 @@ TEST_CASE("HighLevelController: ведомость семестрового ко
     TableDialogView view;
     HighLevelController controller(&university, &view);
     
-    university.addGroup("ГР-01", 5, CategoryStudent::JUNIOR);
-    controller.applyStudentAdmission("ГР-01", "Студент С.С.", 5);
+    university.addGroup("С24-501", 5, CategoryStudent::JUNIOR);
+    controller.applyStudentAdmission("С24-501", "Студент С.С.", 5);
     
-    auto group = university.findGroup("ГР-01");
+    auto group = university.findGroup("С24-501");
     auto table = group->getTable();
     auto student = table->findStudent("Студент С.С.");
     student->addGrade(5);
     student->addGrade(4);
     
-    REQUIRE_NOTHROW(controller.semesterControl("ГР-01"));
+    REQUIRE_NOTHROW(controller.semesterControl("С24-501"));
 }
 

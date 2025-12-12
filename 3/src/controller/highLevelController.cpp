@@ -6,9 +6,7 @@
 #include "../model/seniorStudent.h"
 #include "../view/tableView.h"
 #include "../repository/studentTable.h"
-#include <iostream>
 #include <algorithm>
-#include <numeric>
 #include <vector>
 
 HighLevelController::HighLevelController(University* university, ITableView* view)

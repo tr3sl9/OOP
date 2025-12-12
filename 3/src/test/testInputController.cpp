@@ -29,9 +29,9 @@ TEST_CASE("InputController: обработка команды add_group", "[inpu
     HighLevelController highController(&university, &view);
     InputController controller(&university, &highController);
     
-    controller.processInput("add_group ГР-01 5 JUNIOR");
+    controller.processInput("add_group С25-501 5 JUNIOR");
     
-    auto group = university.findGroup("ГР-01");
+    auto group = university.findGroup("С25-501");
     REQUIRE(group != nullptr);
     REQUIRE(group->getGroupType() == CategoryStudent::JUNIOR);
 }
@@ -42,10 +42,10 @@ TEST_CASE("InputController: обработка команды add_student", "[in
     HighLevelController highController(&university, &view);
     InputController controller(&university, &highController);
     
-    university.addGroup("ГР-01", 5, CategoryStudent::JUNIOR);
+    university.addGroup("С24-501", 5, CategoryStudent::JUNIOR);
     controller.processInput("add_student ГР-01 Иванов И.И. 5");
     
-    auto group = university.findGroup("ГР-01");
+    auto group = university.findGroup("С24-501");
     REQUIRE(group->getStudentCount() == 1);
 }
 
@@ -55,9 +55,9 @@ TEST_CASE("InputController: обработка команды show_group", "[inp
     HighLevelController highController(&university, &view);
     InputController controller(&university, &highController);
     
-    university.addGroup("ГР-01", 5, CategoryStudent::JUNIOR);
+    university.addGroup("С24-501", 5, CategoryStudent::JUNIOR);
     
-    REQUIRE_NOTHROW(controller.processInput("show_group ГР-01"));
+    REQUIRE_NOTHROW(controller.processInput("show_group С24-501"));
 }
 
 TEST_CASE("InputController: обработка команды show_all", "[inputcontroller]") {
@@ -66,8 +66,8 @@ TEST_CASE("InputController: обработка команды show_all", "[input
     HighLevelController highController(&university, &view);
     InputController controller(&university, &highController);
     
-    university.addGroup("ГР-01", 5, CategoryStudent::JUNIOR);
-    university.addGroup("ГР-02", 6, CategoryStudent::SENIOR);
+    university.addGroup("С24-501", 5, CategoryStudent::JUNIOR);
+    university.addGroup("С25-502", 6, CategoryStudent::SENIOR);
     
     REQUIRE_NOTHROW(controller.processInput("show_all"));
 }

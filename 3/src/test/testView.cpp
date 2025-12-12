@@ -32,7 +32,7 @@ TEST_CASE("TableView: вывод состояния системы", "[view]") {
 
 TEST_CASE("TableView: вывод информации о группе", "[view]") {
     TableDialogView view;
-    Group group("ГР-01", 5, CategoryStudent::JUNIOR);
+    Group group("С24-501", 5, CategoryStudent::JUNIOR);
     
     std::ostringstream oss;
     std::streambuf* oldCout = std::cout.rdbuf();
@@ -43,7 +43,7 @@ TEST_CASE("TableView: вывод информации о группе", "[view]"
     std::cout.rdbuf(oldCout);
     
     std::string output = oss.str();
-    REQUIRE(output.find("ГР-01") != std::string::npos);
+    REQUIRE(output.find("С24-501") != std::string::npos);
     REQUIRE(output.find("5") != std::string::npos);
 }
 
@@ -70,8 +70,8 @@ TEST_CASE("TableView: вывод информации о студенте", "[vi
 TEST_CASE("TableView: вывод информации о старшекурснике", "[view]") {
     TableDialogView view;
     SeniorStudent student("Петров П.П.");
-    student.setERWName("Машинное обучение");
-    student.setPlace("Кафедра ИУ");
+    student.setERWName("ИИ дебилы");
+    student.setPlace("Кафедра 22");
     student.setERWGrade(5);
     
     std::ostringstream oss;
@@ -84,8 +84,8 @@ TEST_CASE("TableView: вывод информации о старшекурсн�
     
     std::string output = oss.str();
     REQUIRE(output.find("Петров П.П.") != std::string::npos);
-    REQUIRE(output.find("Машинное обучение") != std::string::npos);
-    REQUIRE(output.find("Кафедра ИУ") != std::string::npos);
+    REQUIRE(output.find("ИИ дебилы") != std::string::npos);
+    REQUIRE(output.find("Кафедра 22") != std::string::npos);
 }
 
 TEST_CASE("TableView: вывод сообщения", "[view]") {
