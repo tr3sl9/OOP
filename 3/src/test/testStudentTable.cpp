@@ -1,6 +1,5 @@
 #include <catch2/catch_all.hpp>
 #include "../repository/studentTable.h"
-#include "../model/student.h"
 #include "../model/juniorStudent.h"
 #include "../model/seniorStudent.h"
 #include <memory>

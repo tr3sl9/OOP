@@ -2,12 +2,8 @@
 #include "../repository/university.h"
 #include "../view/tableView.h"
 #include "../controller/highLevelController.h"
-#include "../model/student.h"
-#include "../model/juniorStudent.h"
-#include "../model/seniorStudent.h"
 #include "../model/studentInterface.h"
 #include "../repository/studentTable.h"
-#include <memory>
 
 TEST_CASE("HighLevelController: зачисление студента", "[controller]") {
     University university;

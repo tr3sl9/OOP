@@ -3,11 +3,9 @@
 #include <sstream>
 #include "../view/tableView.h"
 #include "../repository/group.h"
-#include "../model/student.h"
 #include "../model/juniorStudent.h"
 #include "../model/seniorStudent.h"
 #include "../repository/university.h"
-#include <memory>
 
 TEST_CASE("TableView: создание view", "[view]") {
     TableDialogView view;

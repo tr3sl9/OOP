@@ -3,13 +3,12 @@
 #include "../controller/highLevelController.h"
 #include "../repository/university.h"
 #include "../view/tableView.h"
-#include <sstream>
 
 TEST_CASE("InputController: создание контроллера", "[inputcontroller]") {
     University university;
     TableDialogView view;
     HighLevelController highController(&university, &view);
-    InputController controller(&university, &highController);
+    InputController controller(&university, &highController, &view);
     
     REQUIRE_NOTHROW(controller.processInput("help"));
 }
@@ -18,7 +17,7 @@ TEST_CASE("InputController: обработка команды help", "[inputcont
     University university;
     TableDialogView view;
     HighLevelController highController(&university, &view);
-    InputController controller(&university, &highController);
+    InputController controller(&university, &highController, &view);
     
     REQUIRE_NOTHROW(controller.processInput("help"));
 }
@@ -27,7 +26,7 @@ TEST_CASE("InputController: обработка команды add_group", "[inpu
     University university;
     TableDialogView view;
     HighLevelController highController(&university, &view);
-    InputController controller(&university, &highController);
+    InputController controller(&university, &highController, &view);
     
     controller.processInput("add_group С25-501 5 JUNIOR");
     
@@ -40,10 +39,10 @@ TEST_CASE("InputController: обработка команды add_student", "[in
     University university;
     TableDialogView view;
     HighLevelController highController(&university, &view);
-    InputController controller(&university, &highController);
+    InputController controller(&university, &highController, &view);
     
     university.addGroup("С24-501", 5, CategoryStudent::JUNIOR);
-    controller.processInput("add_student ГР-01 Иванов И.И. 5");
+    controller.processInput("add_student С24-501 Иванов");
     
     auto group = university.findGroup("С24-501");
     REQUIRE(group->getStudentCount() == 1);
@@ -53,7 +52,7 @@ TEST_CASE("InputController: обработка команды show_group", "[inp
     University university;
     TableDialogView view;
     HighLevelController highController(&university, &view);
-    InputController controller(&university, &highController);
+    InputController controller(&university, &highController, &view);
     
     university.addGroup("С24-501", 5, CategoryStudent::JUNIOR);
     
@@ -64,7 +63,7 @@ TEST_CASE("InputController: обработка команды show_all", "[input
     University university;
     TableDialogView view;
     HighLevelController highController(&university, &view);
-    InputController controller(&university, &highController);
+    InputController controller(&university, &highController, &view);
     
     university.addGroup("С24-501", 5, CategoryStudent::JUNIOR);
     university.addGroup("С25-502", 6, CategoryStudent::SENIOR);
@@ -76,7 +75,7 @@ TEST_CASE("InputController: обработка неизвестной коман
     University university;
     TableDialogView view;
     HighLevelController highController(&university, &view);
-    InputController controller(&university, &highController);
+    InputController controller(&university, &highController, &view);
     
     REQUIRE_NOTHROW(controller.processInput("unknown_command"));
 }
@@ -85,7 +84,7 @@ TEST_CASE("InputController: обработка пустой строки", "[inp
     University university;
     TableDialogView view;
     HighLevelController highController(&university, &view);
-    InputController controller(&university, &highController);
+    InputController controller(&university, &highController, &view);
     
     std::string emptyStr;
     REQUIRE_NOTHROW(controller.processInput(emptyStr));

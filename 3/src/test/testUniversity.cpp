@@ -1,7 +1,5 @@
 #include <catch2/catch_all.hpp>
 #include "../repository/university.h"
-#include "../repository/group.h"
-#include "../model/student.h"
 #include "../model/juniorStudent.h"
 #include "../model/seniorStudent.h"
 #include "../model/studentInterface.h"

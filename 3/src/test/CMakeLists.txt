@@ -15,6 +15,7 @@ add_executable(unit_tests
     testStudentTable.cpp
     testView.cpp
     testInputController.cpp
+    testHashTable.cpp
 )
 
 target_link_libraries(unit_tests
