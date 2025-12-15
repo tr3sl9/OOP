@@ -3,11 +3,11 @@
 
 #include <string>
 #include <vector>
-#include <memory>
 
 // Forward declaration
 class University;
 class ControllerProvider;
+class ITableView;
 
 /**
  * @brief Интерфейс для обработки ввода
@@ -30,6 +30,7 @@ class InputController : public InputProvider {
 private:
     University* university_;
     ControllerProvider* controller_; ///< Высокоуровневый контроллер для бизнес-операций
+    ITableView* view_{nullptr};      ///< Представление для вывода сообщений
     
     /**
      * @brief Обработать команду
@@ -51,7 +52,7 @@ public:
      * @param university Указатель на университет (репозиторий групп)
      * @param controller Указатель на высокоуровневый контроллер (бизнес-логика)
      */
-    InputController(University* university, ControllerProvider* controller);
+    InputController(University* university, ControllerProvider* controller, ITableView* view);
     
     /**
      * @brief Деструктор
