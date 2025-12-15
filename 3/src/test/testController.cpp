@@ -80,7 +80,7 @@ TEST_CASE("HighLevelController: поиск отстающих студентов
     good->addGrade(4);
     good->addGrade(2);
     
-    auto lagging = controller.laggingStudents("ГР-01");
+    auto lagging = controller.laggingStudents("С24-501");
     REQUIRE(lagging.size() == 2);
 }
 
