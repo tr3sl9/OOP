@@ -1,7 +1,5 @@
 #include "university.h"
 #include "group.h"
-#include "groupInterface.h"
-#include <iostream>
 
 std::string University::extractKey(const std::shared_ptr<Group>& group) {
     if (!group) {
@@ -19,9 +17,7 @@ University::University(size_t bucket_count) : hashTable_(bucket_count) {
 
 void University::addGroup(const std::string& ID, int maxCountDisciplines, CategoryStudent type) {
     auto group = std::make_shared<Group>(ID, maxCountDisciplines, type);
-    if (!hashTable_.insert(group, ID, createGroupKeyExtractor())) {
-        std::cout << "Группа с ID " << ID << " уже существует." << std::endl;
-    }
+    hashTable_.insert(group, ID, createGroupKeyExtractor());
 }
 
 void University::removeGroup(const std::string& ID) {
@@ -42,12 +38,10 @@ bool University::updateGroup(const std::string& oldID, const std::string& newID)
     auto group = findGroup(oldID);
 
     if (!group) {
-        std::cout << "Группа с ID " << oldID << " не найдена." << std::endl;
         return false;
     }
     
     if (findGroup(newID)) {
-        std::cout << "Группа с ID " << newID << " уже существует." << std::endl;
         return false;
     }
     
@@ -56,11 +50,9 @@ bool University::updateGroup(const std::string& oldID, const std::string& newID)
     group->setID(newID);
     
     if (!hashTable_.insert(group, newID, createGroupKeyExtractor())) {
-        std::cout << "Ошибка при обновлении ID группы." << std::endl;
         return false;
     }
     
-    std::cout << "ID группы изменен с " << oldID << " на " << newID << std::endl;
     return true;
 }
 
@@ -68,13 +60,10 @@ bool University::updateGroup(const std::string& ID, int maxCountDisciplines) {
     auto group = findGroup(ID);
 
     if (!group) {
-        std::cout << "Группа с ID " << ID << " не найдена." << std::endl;
         return false;
     }
     
     group->setMaxCountDisciplines(maxCountDisciplines);
-    std::cout << "Максимальное количество дисциплин для группы " << ID 
-              << " изменено на " << maxCountDisciplines << std::endl;
     return true;
 }
 
@@ -82,22 +71,16 @@ bool University::updateGroup(const std::string& ID, CategoryStudent type) {
     auto group = findGroup(ID);
 
     if (!group) {
-        std::cout << "Группа с ID " << ID << " не найдена." << std::endl;
         return false;
     }
     
     group->setGroupType(type);
-    std::cout << "Тип группы " << ID << " изменен." << std::endl;
     return true;
 }
 
 void University::showGroup(const std::string& ID) const {
     auto group = findGroup(ID);
-    if (group) {
-        group->showGroup();
-    } else {
-        std::cout << "Группа с ID " << ID << " не найдена." << std::endl;
-    }
+    (void)group;
 }
 
 void* University::getTable() const {
