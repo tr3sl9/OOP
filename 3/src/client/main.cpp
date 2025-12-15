@@ -1,17 +1,10 @@
 #include "../repository/university.h"
-#include "../repository/group.h"
-#include "../model/student.h"
-#include "../model/juniorStudent.h"
-#include "../model/seniorStudent.h"
 #include "../view/tableView.h"
 #include "../controller/highLevelController.h"
 #include "../controller/inputController.h"
 #include <iostream>
 #include <string>
-#include <sstream>
-#include <vector>
 #include <memory>
-#include <stdexcept>
 #include <limits>
 
 /**
@@ -26,7 +19,7 @@ int main() {
         std::unique_ptr<HighLevelController> highController = 
             std::make_unique<HighLevelController>(university.get(), view.get());
         std::unique_ptr<InputController> inputController = 
-            std::make_unique<InputController>(university.get(), highController.get());
+            std::make_unique<InputController>(university.get(), highController.get(), view.get());
         
         std::cout << "=== Система учета успеваемости студентов ===" << std::endl;
         std::cout << "Введите 'help' для списка команд или 'exit' для выхода" << std::endl;
