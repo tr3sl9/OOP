@@ -34,6 +34,8 @@ int parseInt(const std::string& s, int fallback = 0) noexcept {
 InputController::InputController(University* university, ControllerProvider* controller, ITableView* view)
     : university_(university), controller_(controller), view_(view) {}
 
+InputController::~InputController() = default;
+
 std::vector<std::string> InputController::tokenize(const std::string& input) const {
     std::vector<std::string> tokens;
     std::istringstream iss(input);

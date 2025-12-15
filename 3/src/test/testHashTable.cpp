@@ -107,6 +107,15 @@ TEST_CASE("HashTable: merge moves unique nodes", "[hashtable]") {
     REQUIRE(rhs.find("b", keyExtractor) != nullptr);
 }
 
+TEST_CASE("HashTable: merge self is no-op", "[hashtable]") {
+    HashTable<Item, std::string> table(3);
+    auto keyExtractor = itemKey();
+    table.insert(Item{"a", 1}, "a", keyExtractor);
+    table.merge(table, keyExtractor);
+    REQUIRE(table.size() == 1);
+    REQUIRE(table.find("a", keyExtractor) != nullptr);
+}
+
 TEST_CASE("HashTable: move constructor and assignment", "[hashtable]") {
     HashTable<Item, std::string> source(3);
     auto keyExtractor = itemKey();
@@ -120,5 +129,22 @@ TEST_CASE("HashTable: move constructor and assignment", "[hashtable]") {
     target = std::move(moved);
     REQUIRE(target.size() == 1);
     REQUIRE(target.find("a", keyExtractor) != nullptr);
+}
+
+TEST_CASE("HashTable: iterators on moved-from (bucket_count == 0)", "[hashtable]") {
+    HashTable<Item, std::string> original(2);
+    auto keyExtractor = itemKey();
+    original.insert(Item{"a", 1}, "a", keyExtractor);
+
+    HashTable<Item, std::string> moved(std::move(original));
+
+    auto beginIt = original.begin();
+    auto endIt = original.end();
+    REQUIRE(beginIt == endIt);
+
+    const auto& constRef = original;
+    auto cbeginIt = constRef.begin();
+    auto cendIt = constRef.end();
+    REQUIRE(cbeginIt == cendIt);
 }
 

@@ -57,7 +57,7 @@ public:
     /**
      * @brief Деструктор
      */
-    ~InputController() override = default;
+    ~InputController() override;
     
     /**
      * @brief Обработать ввод
