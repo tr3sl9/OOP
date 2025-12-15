@@ -9,6 +9,8 @@
 #include <list>
 #include <vector>
 #include <type_traits>
+#include <optional>
+#include <utility>
 
 /// Реализация хеш-таблицы, перемешанной сцеплением.
 /// Использует std::hash по умолчанию для хеширования ключей.
@@ -114,6 +116,29 @@ public:
     }
 
     /**
+     * @brief Разместить элемент на месте
+     * @param key Ключ для бакета и проверки дубликатов
+     * @param keyExtractor Функция извлечения ключа из значения
+     * @param args Аргументы для конструирования элемента
+     * @return true, если вставлен новый элемент, false если ключ уже существует
+     */
+    template<typename K, typename... Args>
+    bool emplace(const K& key, const std::function<Key(const T&)>& keyExtractor, Args&&... args) {
+        size_t idx = bucket_index(key);
+        auto& bucket = buckets_[idx];
+
+        for (const auto& item : bucket) {
+            if (keyEqual_(keyExtractor(item), key)) {
+                return false;
+            }
+        }
+
+        bucket.emplace_front(std::forward<Args>(args)...);
+        ++size_;
+        return true;
+    }
+
+    /**
      * @brief Поиск элемента по ключу
      * @param key Ключ для поиска
      * @param keyExtractor Функция извлечения ключа из значения
@@ -153,6 +178,64 @@ public:
         }
 
         return false;
+    }
+
+    /**
+     * @brief Извлечь элемент (с удалением из таблицы)
+     * @param key Ключ для поиска
+     * @param keyExtractor Функция извлечения ключа
+     * @return Извлечённый элемент или пустой optional
+     */
+    template<typename K>
+    std::optional<T> extract(const K& key, const std::function<Key(const T&)>& keyExtractor) {
+        size_t idx = bucket_index(key);
+        auto& bucket = buckets_[idx];
+
+        for (auto it = bucket.begin(); it != bucket.end(); ++it) {
+            if (keyEqual_(keyExtractor(*it), key)) {
+                std::optional<T> result(std::move(*it));
+                bucket.erase(it);
+                --size_;
+                return result;
+            }
+        }
+        return std::nullopt;
+    }
+
+    /**
+     * @brief Обменять содержимое двух таблиц
+     */
+    void swap(HashTable& other) noexcept(std::is_nothrow_swappable_v<Hasher> && std::is_nothrow_swappable_v<KeyEqual>) {
+        using std::swap;
+        swap(bucket_count_, other.bucket_count_);
+        swap(size_, other.size_);
+        swap(buckets_, other.buckets_);
+        swap(hasher_, other.hasher_);
+        swap(keyEqual_, other.keyEqual_);
+    }
+
+    /**
+     * @brief Объединить таблицу с другой, перенося уникальные элементы
+     * Дубликаты остаются в исходной таблице other.
+     */
+    void merge(HashTable& other, const std::function<Key(const T&)>& keyExtractor) {
+        if (this == &other) {
+            return;
+        }
+
+        for (size_t i = 0; i < other.bucket_count_; ++i) {
+            auto& bucket = other.buckets_[i];
+            for (auto it = bucket.begin(); it != bucket.end();) {
+                const auto currentKey = keyExtractor(*it);
+                if (find(currentKey, keyExtractor) == nullptr) {
+                    insert(std::move(*it), currentKey, keyExtractor);
+                    it = bucket.erase(it);
+                    --other.size_;
+                } else {
+                    ++it;
+                }
+            }
+        }
     }
 
     size_t size() const noexcept { return size_; }
