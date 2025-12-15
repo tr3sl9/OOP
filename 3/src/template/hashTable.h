@@ -2,12 +2,9 @@
 #define HASH_TABLE_H
 #include <functional>
 #include <memory>
-#include <stdexcept>
 #include <cstddef>
 #include <iterator>
-#include <string>
 #include <list>
-#include <vector>
 #include <type_traits>
 #include <optional>
 #include <utility>
@@ -367,7 +364,7 @@ public:
                     return;
                 }
             }
-            // Достигли конца - устанавливаем end итератор
+
             bucket_idx_ = table_->bucket_count_ > 0 ? table_->bucket_count_ - 1 : 0;
             list_it_ = table_->bucket_count_ > 0 ? table_->buckets_[bucket_idx_].end() : typename std::list<T>::const_iterator();
         }

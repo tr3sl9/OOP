@@ -1,5 +1,4 @@
 #include "student.h"
-#include <algorithm>
 #include <numeric>
 
 Student::Student() : fullname_(""), grades_() {

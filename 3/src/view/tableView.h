@@ -2,7 +2,6 @@
 #define TABLE_VIEW_H
 
 #include <string>
-#include <vector>
 
 // Forward declaration
 class Student;

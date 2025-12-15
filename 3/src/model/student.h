@@ -1,10 +1,8 @@
 #ifndef STUDENT_H
 #define STUDENT_H
 
-#include <numeric>
 #include <string>
 #include <vector>
-#include <memory>
 
 #include "studentInterface.h"
 

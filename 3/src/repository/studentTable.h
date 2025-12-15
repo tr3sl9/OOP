@@ -2,13 +2,11 @@
 #define STUDENT_TABLE_H
 
 #include "../model/student.h"
-#include "../model/studentInterface.h"
 #include "../template/hashTable.h"
 
 #include <memory>
 #include <string>
 #include <vector>
-#include <algorithm>
 
 /**
  * @brief Класс таблицы студентов

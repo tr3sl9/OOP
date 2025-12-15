@@ -4,11 +4,9 @@
 #include "../model/student.h"
 #include "../model/studentInterface.h"
 #include "groupInterface.h"
-#include "../template/hashTable.h"
 
 #include <memory>
 #include <string>
-#include <vector>
 
 // Forward declaration
 class StudentTable;
