@@ -28,6 +28,10 @@ public:
     virtual double averageGroupGrade(const std::string& groupID) = 0;
     /// Получить всех отстающих студентов (3+ двойки)
     virtual std::vector<std::shared_ptr<Student>> laggingStudents(const std::string& groupID = "") = 0;
+    /// Многопоточная версия: получить всех отстающих студентов (3+ двойки)
+    virtual std::vector<std::shared_ptr<Student>> laggingStudentsMultithreaded(const std::string& groupID = "") = 0;
+    /// Многопоточная версия: определить средний балл для всех групп
+    virtual std::vector<std::pair<std::string, double>> averageAllGroupsMultithreaded() = 0;
 };
 
 /**
@@ -50,6 +54,8 @@ public:
     void semesterControl(const std::string& groupID) override;
     double averageGroupGrade(const std::string& groupID) override;
     std::vector<std::shared_ptr<Student>> laggingStudents(const std::string& groupID = "") override;
+    std::vector<std::shared_ptr<Student>> laggingStudentsMultithreaded(const std::string& groupID = "") override;
+    std::vector<std::pair<std::string, double>> averageAllGroupsMultithreaded() override;
 };
 
 #endif

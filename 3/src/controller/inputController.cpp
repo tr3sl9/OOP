@@ -70,7 +70,7 @@ bool InputController::processCommand(const std::string& command, const std::vect
 
     bool shouldExit = false;
 
-    const std::array<Command, 10> commands = {{
+    const std::array<Command, 12> commands = {{
         {"help", "help", [view](const std::vector<std::string>&) {
             if (!view) return;
             view->printMessage("Команды:");
@@ -81,6 +81,8 @@ bool InputController::processCommand(const std::string& command, const std::vect
             view->printMessage("  semester <group_id>");
             view->printMessage("  avg <group_id>");
             view->printMessage("  lagging [group_id]");
+            view->printMessage("  lagging_mt [group_id] - многопоточная версия");
+            view->printMessage("  avg_all_mt - средний балл по всем группам (многопоточно)");
             view->printMessage("  show_group <group_id>");
             view->printMessage("  show_all");
             view->printMessage("  exit");
@@ -170,6 +172,15 @@ bool InputController::processCommand(const std::string& command, const std::vect
         {"lagging", "lagging [group_id]", [controller](const std::vector<std::string>& a) {
             const std::string group = a.empty() ? "" : a[0];
             controller->laggingStudents(group);
+        }},
+
+        {"lagging_mt", "lagging_mt [group_id]", [controller](const std::vector<std::string>& a) {
+            const std::string group = a.empty() ? "" : a[0];
+            controller->laggingStudentsMultithreaded(group);
+        }},
+
+        {"avg_all_mt", "avg_all_mt", [controller](const std::vector<std::string>&) {
+            controller->averageAllGroupsMultithreaded();
         }},
 
         {"show_group", "show_group <group_id>", [university, view](const std::vector<std::string>& a) {
