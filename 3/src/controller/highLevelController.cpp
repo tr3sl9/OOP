@@ -22,7 +22,7 @@ int HighLevelController::countFailures(const Student* student) const {
         return 0;
     }
 
-    auto grades = student->getGrades();
+    const auto& grades = student->getGrades();
 
     return std::count(grades.begin(), grades.end(), 2);
 }
@@ -144,16 +144,17 @@ double HighLevelController::averageGroupGrade(const std::string& groupID) {
         return 0.0;
     }
     
-    auto students = table->getAllStudents();
-    if (students.empty()) {
+    if (table->empty()) {
         return 0.0;
     }
     
     double total = 0.0;
     int count = 0;
-    for (const auto& student : students) {
+
+    for (auto it = table->begin(); it != table->end(); ++it) {
+        const auto& student = *it;
         if (student) {
-            auto grades = student->getGrades();
+            const auto& grades = student->getGrades();
             if (!grades.empty()) {
                 double avg = student->average();
                 total += avg;
@@ -164,9 +165,9 @@ double HighLevelController::averageGroupGrade(const std::string& groupID) {
     
     double result = (count > 0) ? (total / count) : 0.0;
     
-    if (view_) {
-        view_->printMessage("Средний балл группы " + groupID + ": " + std::to_string(result));
-    }
+    // if (view_) {
+    //     view_->printMessage("Средний балл группы " + groupID + ": " + std::to_string(result));
+    // }
     
     return result;
 }
@@ -198,10 +199,10 @@ std::vector<std::shared_ptr<Student>> HighLevelController::laggingStudents(const
             continue;
         }
         
-        auto students = table->getAllStudents();
-        for (const auto& student : students) {
+        for (auto it = table->begin(); it != table->end(); ++it) {
+            const auto& student = *it;
             if (!student) continue;
-            auto grades = student->getGrades();
+            const auto& grades = student->getGrades();
             int failures = std::count(grades.begin(), grades.end(), 2);
             if (failures >= 3) {
                 lagging.push_back(student);
@@ -211,11 +212,11 @@ std::vector<std::shared_ptr<Student>> HighLevelController::laggingStudents(const
     
     if (view_) {
         view_->printMessage("Найдено отстающих студентов: " + std::to_string(lagging.size()));
-        for (const auto& student : lagging) {
-            if (student) {
-                view_->printStudent(student.get());
-            }
-        }
+        // for (const auto& student : lagging) {
+        //     if (student) {
+        //         view_->printStudent(student.get());
+        //     }
+        // }
     }
     
     return lagging;
@@ -253,6 +254,9 @@ std::vector<std::shared_ptr<Student>> HighLevelController::laggingStudentsMultit
     
     for (size_t i = 0; i < numThreads; ++i) {
         threads.emplace_back([&groups, &lagging, &resultMutex, &nextGroupIndex, totalGroups]() {
+            std::vector<std::shared_ptr<Student>> threadLocalLagging;
+            threadLocalLagging.reserve(1000);
+            
             while (true) {
                 size_t currentIndex = nextGroupIndex.fetch_add(1, std::memory_order_relaxed);
                 
@@ -270,22 +274,20 @@ std::vector<std::shared_ptr<Student>> HighLevelController::laggingStudentsMultit
                     continue;
                 }
                 
-                std::vector<std::shared_ptr<Student>> localLagging;
-                
-                auto students = table->getAllStudents();
-                for (const auto& student : students) {
+                for (auto it = table->begin(); it != table->end(); ++it) {
+                    const auto& student = *it;
                     if (!student) continue;
-                    auto grades = student->getGrades();
+                    const auto& grades = student->getGrades();
                     int failures = std::count(grades.begin(), grades.end(), 2);
                     if (failures >= 3) {
-                        localLagging.push_back(student);
+                        threadLocalLagging.push_back(student);
                     }
                 }
-                
-                if (!localLagging.empty()) {
-                    std::lock_guard<std::mutex> lock(resultMutex);
-                    lagging.insert(lagging.end(), localLagging.begin(), localLagging.end());
-                }
+            }
+            
+            if (!threadLocalLagging.empty()) {
+                std::lock_guard<std::mutex> lock(resultMutex);
+                lagging.insert(lagging.end(), threadLocalLagging.begin(), threadLocalLagging.end());
             }
         });
     }
@@ -298,11 +300,11 @@ std::vector<std::shared_ptr<Student>> HighLevelController::laggingStudentsMultit
     
     if (view_) {
         view_->printMessage("Найдено отстающих студентов (многопоточно): " + std::to_string(lagging.size()));
-        for (const auto& student : lagging) {
-            if (student) {
-                view_->printStudent(student.get());
-            }
-        }
+        // for (const auto& student : lagging) {
+        //     if (student) {
+        //         view_->printStudent(student.get());
+        //     }
+        // }
     }
     
     return lagging;
@@ -331,6 +333,9 @@ std::vector<std::pair<std::string, double>> HighLevelController::averageAllGroup
     
     for (size_t i = 0; i < numThreads; ++i) {
         threads.emplace_back([&groups, &results, &resultMutex, &nextGroupIndex, totalGroups]() {
+            std::vector<std::pair<std::string, double>> threadLocalResults;
+            threadLocalResults.reserve(100); // Резервируем память
+            
             while (true) {
                 size_t currentIndex = nextGroupIndex.fetch_add(1, std::memory_order_relaxed);
                 
@@ -348,16 +353,13 @@ std::vector<std::pair<std::string, double>> HighLevelController::averageAllGroup
                     continue;
                 }
                 
-                auto students = table->getAllStudents();
-                if (students.empty()) {
-                    continue;
-                }
-                
                 double total = 0.0;
                 int count = 0;
-                for (const auto& student : students) {
+
+                for (auto it = table->begin(); it != table->end(); ++it) {
+                    const auto& student = *it;
                     if (student) {
-                        auto grades = student->getGrades();
+                        const auto& grades = student->getGrades();
                         if (!grades.empty()) {
                             double avg = student->average();
                             total += avg;
@@ -368,9 +370,13 @@ std::vector<std::pair<std::string, double>> HighLevelController::averageAllGroup
                 
                 if (count > 0) {
                     double average = total / count;
-                    std::lock_guard<std::mutex> lock(resultMutex);
-                    results.emplace_back(group->getID(), average);
+                    threadLocalResults.emplace_back(group->getID(), average);
                 }
+            }
+            
+            if (!threadLocalResults.empty()) {
+                std::lock_guard<std::mutex> lock(resultMutex);
+                results.insert(results.end(), threadLocalResults.begin(), threadLocalResults.end());
             }
         });
     }
@@ -383,9 +389,10 @@ std::vector<std::pair<std::string, double>> HighLevelController::averageAllGroup
     
     if (view_) {
         view_->printMessage("\n=== Средний балл по всем группам (многопоточно) ===");
-        for (const auto& [groupID, avg] : results) {
-            view_->printMessage("Группа " + groupID + ": " + std::to_string(avg));
-        }
+        view_->printMessage("Обработано групп: " + std::to_string(results.size()));
+        // for (const auto& [groupID, avg] : results) {
+        //     view_->printMessage("Группа " + groupID + ": " + std::to_string(avg));
+        // }
     }
     
     return results;
