@@ -48,9 +48,9 @@ public:
     
     /**
      * @brief Получить список оценок
-     * @return Вектор оценок
+     * @return Константная ссылка на вектор оценок
      */
-    std::vector<int> getGrades() const override;
+    const std::vector<int>& getGrades() const override;
     
     /**
      * @brief Получить тип студента

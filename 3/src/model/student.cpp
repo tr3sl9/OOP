@@ -15,7 +15,7 @@ void Student::addGrade(int g) {
     grades_.push_back(g);
 }
 
-std::vector<int> Student::getGrades() const {
+const std::vector<int>& Student::getGrades() const {
     return grades_;
 }
 

@@ -34,9 +34,9 @@ public:
     
     /**
      * @brief Получить список оценок
-     * @return Вектор оценок
+     * @return Константная ссылка на вектор оценок
      */
-    virtual std::vector<int> getGrades() const = 0;
+    virtual const std::vector<int>& getGrades() const = 0;
     
     /**
      * @brief Получить тип студента
