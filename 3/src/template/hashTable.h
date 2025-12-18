@@ -5,6 +5,8 @@
 #include <cstddef>
 #include <iterator>
 #include <list>
+#include <vector>
+#include <algorithm>
 #include <type_traits>
 #include <optional>
 #include <utility>
@@ -19,10 +21,28 @@ private:
     std::unique_ptr<std::list<T>[]> buckets_;
     Hasher hasher_;
     KeyEqual keyEqual_;
+    mutable std::vector<size_t> nonempty_buckets_;
+    mutable bool nonempty_cache_valid_;
 
     template<typename K>
     size_t bucket_index(const K& key) const {
         return hasher_(key) % bucket_count_;
+    }
+    
+    void invalidate_nonempty_cache() const {
+        nonempty_cache_valid_ = false;
+    }
+    
+    void update_nonempty_cache() const {
+        if (!nonempty_cache_valid_) {
+            nonempty_buckets_.clear();
+            for (size_t i = 0; i < bucket_count_; ++i) {
+                if (!buckets_[i].empty()) {
+                    nonempty_buckets_.push_back(i);
+                }
+            }
+            nonempty_cache_valid_ = true;
+        }
     }
 
 public:
@@ -38,7 +58,7 @@ public:
     using pointer = value_type*;
     using const_pointer = const value_type*;
 
-    explicit HashTable(size_t bucket_count = 101) : bucket_count_(bucket_count), size_(0), buckets_(std::make_unique<std::list<T>[]>(bucket_count_)) {}
+    explicit HashTable(size_t bucket_count = 101) : bucket_count_(bucket_count), size_(0), buckets_(std::make_unique<std::list<T>[]>(bucket_count_)), nonempty_cache_valid_(false) {}
 
     ~HashTable() = default;
 
@@ -48,9 +68,12 @@ public:
     HashTable(HashTable&& other) noexcept 
         : bucket_count_(other.bucket_count_), size_(other.size_), 
           buckets_(std::move(other.buckets_)), hasher_(std::move(other.hasher_)),
-          keyEqual_(std::move(other.keyEqual_)) {
+          keyEqual_(std::move(other.keyEqual_)),
+          nonempty_buckets_(std::move(other.nonempty_buckets_)),
+          nonempty_cache_valid_(other.nonempty_cache_valid_) {
         other.bucket_count_ = 0;
         other.size_ = 0;
+        other.nonempty_cache_valid_ = false;
     }
 
     HashTable& operator=(HashTable&& other) noexcept {
@@ -60,8 +83,11 @@ public:
             buckets_ = std::move(other.buckets_);
             hasher_ = std::move(other.hasher_);
             keyEqual_ = std::move(other.keyEqual_);
+            nonempty_buckets_ = std::move(other.nonempty_buckets_);
+            nonempty_cache_valid_ = other.nonempty_cache_valid_;
             other.bucket_count_ = 0;
             other.size_ = 0;
+            other.nonempty_cache_valid_ = false;
         }
         return *this;
     }
@@ -86,6 +112,7 @@ public:
 
         bucket.push_front(value);
         ++size_;
+        invalidate_nonempty_cache();
         return true;
     }
 
@@ -109,6 +136,7 @@ public:
         
         bucket.push_front(std::move(value));
         ++size_;
+        invalidate_nonempty_cache();
         return true;
     }
 
@@ -170,6 +198,7 @@ public:
             if (keyEqual_(keyExtractor(*it), key)) {
                 bucket.erase(it);
                 --size_;
+                invalidate_nonempty_cache();
                 return true;
             }
         }
@@ -193,6 +222,7 @@ public:
                 std::optional<T> result(std::move(*it));
                 bucket.erase(it);
                 --size_;
+                invalidate_nonempty_cache();
                 return result;
             }
         }
@@ -246,6 +276,22 @@ public:
             buckets_[i].clear();
         }
         size_ = 0;
+        invalidate_nonempty_cache();
+    }
+
+    /**
+     * @brief Получить все элементы в виде вектора (оптимизация для итерации)
+     * @return Вектор всех элементов
+     */
+    std::vector<T> getAllElements() const {
+        std::vector<T> result;
+        result.reserve(size_);
+        for (size_t i = 0; i < bucket_count_; ++i) {
+            for (const auto& item : buckets_[i]) {
+                result.push_back(item);
+            }
+        }
+        return result;
     }
 
     // Forward iterator
@@ -296,12 +342,16 @@ public:
                 return; 
             }
 
-            for (size_t i = start; i < table_->bucket_count_; ++i) {
-                if (!table_->buckets_[i].empty()) {
-                    bucket_idx_ = i;
-                    list_it_ = table_->buckets_[i].begin();
-                    return;
-                }
+            table_->update_nonempty_cache();
+            const auto& nonempty = table_->nonempty_buckets_;
+            
+            // Бинарный поиск в кеше непустых buckets
+            auto it = std::lower_bound(nonempty.begin(), nonempty.end(), start);
+            
+            if (it != nonempty.end()) {
+                bucket_idx_ = *it;
+                list_it_ = table_->buckets_[bucket_idx_].begin();
+                return;
             }
 
             bucket_idx_ = table_->bucket_count_ > 0 ? table_->bucket_count_ - 1 : 0;
@@ -357,12 +407,16 @@ public:
                 bucket_idx_ = 0;
                 return; 
             }
-            for (size_t i = start; i < table_->bucket_count_; ++i) {
-                if (!table_->buckets_[i].empty()) {
-                    bucket_idx_ = i;
-                    list_it_ = table_->buckets_[i].begin();
-                    return;
-                }
+            
+            table_->update_nonempty_cache();
+            const auto& nonempty = table_->nonempty_buckets_;
+            
+            auto it = std::lower_bound(nonempty.begin(), nonempty.end(), start);
+            
+            if (it != nonempty.end()) {
+                bucket_idx_ = *it;
+                list_it_ = table_->buckets_[bucket_idx_].begin();
+                return;
             }
 
             bucket_idx_ = table_->bucket_count_ > 0 ? table_->bucket_count_ - 1 : 0;
@@ -381,13 +435,13 @@ public:
             return end();
         }
 
-        for (size_t i = 0; i < bucket_count_; ++i) {
-            if (!buckets_[i].empty()) {
-                return iterator(this, i, buckets_[i].begin());
-            }
+        update_nonempty_cache();
+        if (nonempty_buckets_.empty()) {
+            return end();
         }
-
-        return end();
+        
+        size_t firstBucket = nonempty_buckets_[0];
+        return iterator(this, firstBucket, buckets_[firstBucket].begin());
     }
 
     iterator end() noexcept {
@@ -403,13 +457,13 @@ public:
             return end();
         }
 
-        for (size_t i = 0; i < bucket_count_; ++i) {
-            if (!buckets_[i].empty()) {
-                return const_iterator(this, i, buckets_[i].begin());
-            }
+        update_nonempty_cache();
+        if (nonempty_buckets_.empty()) {
+            return end();
         }
-
-        return end();
+        
+        size_t firstBucket = nonempty_buckets_[0];
+        return const_iterator(this, firstBucket, buckets_[firstBucket].begin());
     }
 
     const_iterator end() const noexcept {
