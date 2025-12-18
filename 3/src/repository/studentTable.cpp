@@ -83,3 +83,7 @@ std::vector<std::shared_ptr<Student>> StudentTable::getAllStudents() const {
     return getSortedStudents();
 }
 
+std::vector<std::shared_ptr<Student>> StudentTable::getAllElements() const {
+    return table_.getAllElements();
+}
+

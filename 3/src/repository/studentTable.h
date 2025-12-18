@@ -105,6 +105,12 @@ public:
      * @return Вектор указателей на студентов
      */
     std::vector<std::shared_ptr<Student>> getAllStudents() const;
+    
+    /**
+     * @brief Получить всех студентов без сортировки (быстрый метод для итерации)
+     * @return Вектор указателей на студентов
+     */
+    std::vector<std::shared_ptr<Student>> getAllElements() const;
 };
 
 #endif
