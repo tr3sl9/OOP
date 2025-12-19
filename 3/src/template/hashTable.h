@@ -10,6 +10,7 @@
 #include <type_traits>
 #include <optional>
 #include <utility>
+#include <mutex>
 
 /// Реализация хеш-таблицы, перемешанной сцеплением.
 /// Использует std::hash по умолчанию для хеширования ключей.
@@ -23,6 +24,7 @@ private:
     KeyEqual keyEqual_;
     mutable std::vector<size_t> nonempty_buckets_;
     mutable bool nonempty_cache_valid_;
+    mutable std::mutex cache_mutex_;  // Защита кэша от data race
 
     template<typename K>
     size_t bucket_index(const K& key) const {
@@ -30,10 +32,12 @@ private:
     }
     
     void invalidate_nonempty_cache() const {
+        std::lock_guard<std::mutex> lock(cache_mutex_);
         nonempty_cache_valid_ = false;
     }
     
     void update_nonempty_cache() const {
+        std::lock_guard<std::mutex> lock(cache_mutex_);
         if (!nonempty_cache_valid_) {
             nonempty_buckets_.clear();
             for (size_t i = 0; i < bucket_count_; ++i) {
@@ -342,10 +346,13 @@ public:
                 return; 
             }
 
-            table_->update_nonempty_cache();
-            const auto& nonempty = table_->nonempty_buckets_;
+            std::vector<size_t> nonempty;
+            {
+                table_->update_nonempty_cache();
+                std::lock_guard<std::mutex> lock(table_->cache_mutex_);
+                nonempty = table_->nonempty_buckets_;
+            }
             
-            // Бинарный поиск в кеше непустых buckets
             auto it = std::lower_bound(nonempty.begin(), nonempty.end(), start);
             
             if (it != nonempty.end()) {
@@ -408,8 +415,12 @@ public:
                 return; 
             }
             
-            table_->update_nonempty_cache();
-            const auto& nonempty = table_->nonempty_buckets_;
+            std::vector<size_t> nonempty;
+            {
+                table_->update_nonempty_cache();
+                std::lock_guard<std::mutex> lock(table_->cache_mutex_);
+                nonempty = table_->nonempty_buckets_;
+            }
             
             auto it = std::lower_bound(nonempty.begin(), nonempty.end(), start);
             
@@ -436,11 +447,14 @@ public:
         }
 
         update_nonempty_cache();
-        if (nonempty_buckets_.empty()) {
-            return end();
+        size_t firstBucket;
+        {
+            std::lock_guard<std::mutex> lock(cache_mutex_);
+            if (nonempty_buckets_.empty()) {
+                return end();
+            }
+            firstBucket = nonempty_buckets_[0];
         }
-        
-        size_t firstBucket = nonempty_buckets_[0];
         return iterator(this, firstBucket, buckets_[firstBucket].begin());
     }
 
@@ -458,11 +472,14 @@ public:
         }
 
         update_nonempty_cache();
-        if (nonempty_buckets_.empty()) {
-            return end();
+        size_t firstBucket;
+        {
+            std::lock_guard<std::mutex> lock(cache_mutex_);
+            if (nonempty_buckets_.empty()) {
+                return end();
+            }
+            firstBucket = nonempty_buckets_[0];
         }
-        
-        size_t firstBucket = nonempty_buckets_[0];
         return const_iterator(this, firstBucket, buckets_[firstBucket].begin());
     }
 

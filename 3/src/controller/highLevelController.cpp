@@ -252,8 +252,10 @@ std::vector<std::shared_ptr<Student>> HighLevelController::laggingStudentsMultit
     std::vector<std::thread> threads;
     threads.reserve(numThreads);
     
+    auto groupsCopy = groups;
+    
     for (size_t i = 0; i < numThreads; ++i) {
-        threads.emplace_back([&groups, &lagging, &resultMutex, &nextGroupIndex, totalGroups]() {
+        threads.emplace_back([groupsCopy, &lagging, &resultMutex, &nextGroupIndex, totalGroups]() {
             std::vector<std::shared_ptr<Student>> threadLocalLagging;
             threadLocalLagging.reserve(1000);
             
@@ -264,7 +266,7 @@ std::vector<std::shared_ptr<Student>> HighLevelController::laggingStudentsMultit
                     break;
                 }
                 
-                const auto& group = groups[currentIndex];
+                const auto& group = groupsCopy[currentIndex];
                 if (!group) {
                     continue;
                 }
@@ -331,8 +333,10 @@ std::vector<std::pair<std::string, double>> HighLevelController::averageAllGroup
     std::vector<std::thread> threads;
     threads.reserve(numThreads);
     
+    auto groupsCopy = groups;
+    
     for (size_t i = 0; i < numThreads; ++i) {
-        threads.emplace_back([&groups, &results, &resultMutex, &nextGroupIndex, totalGroups]() {
+        threads.emplace_back([groupsCopy, &results, &resultMutex, &nextGroupIndex, totalGroups]() {
             std::vector<std::pair<std::string, double>> threadLocalResults;
             threadLocalResults.reserve(100); // Резервируем память
             
@@ -343,7 +347,7 @@ std::vector<std::pair<std::string, double>> HighLevelController::averageAllGroup
                     break;
                 }
                 
-                const auto& group = groups[currentIndex];
+                const auto& group = groupsCopy[currentIndex];
                 if (!group) {
                     continue;
                 }

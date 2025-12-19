@@ -129,8 +129,13 @@ void runBenchmark(size_t groupCount, size_t studentsPerGroup, size_t gradesPerSt
  * @brief Сохранить результаты бенчмарка в CSV файл для построения графиков
  */
 void saveBenchmarkResults() {
-    std::ofstream csv("benchmark_results.csv");
+    std::ofstream csv("../../benchmark_results.csv");
+    if (!csv.is_open()) {
+        std::cerr << "\n\nОШИБКА: Не удалось открыть файл benchmark_results.csv для записи!" << std::endl;
+        return;
+    }
     csv << "GroupCount,StudentsPerGroup,TotalStudents,LaggingSingleThread,LaggingMultiThread,LaggingSpeedup\n";
+    csv.flush();
     
     std::vector<std::pair<size_t, size_t>> configs = {
         {10, 10000}, 
@@ -178,6 +183,7 @@ void saveBenchmarkResults() {
             << laggingSingle << ","
             << laggingMulti << ","
             << laggingSpeedup << "\n";
+        csv.flush();
         
         std::cout << "  Результат: " << laggingSingle << " мс (однопоточно) -> " << laggingMulti 
                   << " мс (многопоточно), ускорение: " << std::fixed << std::setprecision(2) 
@@ -185,7 +191,11 @@ void saveBenchmarkResults() {
     }
     
     csv.close();
-    std::cout << "\n\nРезультаты сохранены в benchmark_results.csv" << std::endl;
+    if (csv.good() || csv.eof()) {
+        std::cout << "\n\nРезультаты сохранены в ../../benchmark_results.csv" << std::endl;
+    } else {
+        std::cerr << "\n\nОШИБКА: Не удалось сохранить результаты в CSV файл!" << std::endl;
+    }
 }
 
 /**
